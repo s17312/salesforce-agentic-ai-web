@@ -4,7 +4,6 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Badge,
   Avatar,
   Box,
   Stack,
@@ -12,28 +11,26 @@ import {
   MenuItem,
   ListItemIcon,
   Divider,
-  useTheme,
+  Button,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MailIcon from '@mui/icons-material/Mail';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import { SaveIcon } from '@/components/icons/saveIcon';
 
 export function AppBar({
   username,
-  userRole,
-  userImage,
-  messages = 0,
-  notifications = 0,
+  userRole = "Admin",
+  userImage = "https://www.w3schools.com/howto/img_avatar.png",
   onProfileClick,
   onSettingsClick,
   onLogoutClick,
   onToggleDrawerClick,
   ...props
 }: any) {
-  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -47,57 +44,115 @@ export function AppBar({
 
   return (
     <MuiAppBar
-      position="sticky"
-      color="inherit"
+      position="static"
       elevation={0}
       sx={{
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.paper,
-        zIndex: theme.zIndex.drawer - 1,
+        backgroundColor: '#080a25',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        zIndex: 1200,
+        height: '60px',
+        justifyContent: 'center',
       }}
       {...props}
     >
-      <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 3 } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton edge="start" color="inherit" onClick={onToggleDrawerClick} sx={{ display: { md: 'none' } }}>
-            <MenuIcon />
+      <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 3 }, minHeight: '60px !important' }}>
+        {/* Left Side: Hamburger & Saved Pages Button */}
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={onToggleDrawerClick}
+            sx={{
+              color: '#ffffff',
+              p: 0.8,
+              borderRadius: '8px',
+              border: '1px solid rgba(255,255,255,0.2)',
+              bgcolor: 'rgba(255,255,255,0.06)',
+            }}
+          >
+            <MenuIcon fontSize="small" />
           </IconButton>
-          <Typography variant="h6" fontWeight={800} color="primary.main">
-            CONNECT<span style={{ color: theme.palette.secondary.main }}>FORCE</span> SFA
+
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            sx={{
+              backgroundColor: 'rgba(255, 255, 255, 0.18)',
+              color: '#ffffff',
+              borderRadius: '10px', // Reduced border-radius (Point 1)
+              px: 2,
+              py: 0.6,
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '0.85rem',
+              boxShadow: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.5,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Saved Pages
+          </Button>
+        </Stack>
+
+        {/* Center: Connect Force Logo */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: '8px',
+              bgcolor: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <BarChartIcon sx={{ color: '#0a0d2c', fontSize: '1.25rem' }} />
+          </Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              color: '#ffffff',
+              letterSpacing: '-0.3px',
+              fontSize: '1.25rem',
+              fontFamily: '"Public Sans", sans-serif',
+            }}
+          >
+            Connect Force
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <IconButton color="inherit">
-            <Badge badgeContent={notifications} color="error">
-              <NotificationsIcon sx={{ color: theme.palette.text.secondary }} />
-            </Badge>
-          </IconButton>
-
+        {/* Right Side: Profile & Role Dropdown */}
+        <Stack direction="row" spacing={1} alignItems="center">
           <Box
             onClick={handleAvatarClick}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 1.5,
+              gap: 1,
               cursor: 'pointer',
               py: 0.5,
               px: 1,
-              borderRadius: 2,
-              '&:hover': { bgcolor: theme.palette.action.hover },
+              borderRadius: '8px',
+              transition: 'background-color 0.2s',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
             }}
           >
-            <Avatar src={userImage} sx={{ width: 36, height: 36, bgcolor: theme.palette.primary.main }}>
-              {username ? username[0].toUpperCase() : 'A'}
-            </Avatar>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Typography variant="subtitle2" fontWeight={700} lineHeight={1.2} color="text.primary">
-                {username || 'System Admin'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" display="block">
-                {userRole || 'Administrator'}
-              </Typography>
-            </Box>
+            <Avatar
+              src={userImage}
+              alt={username || 'Admin'}
+              sx={{ width: 34, height: 34, border: '1.5px solid rgba(255,255,255,0.3)' }}
+            />
+            <Typography variant="body2" sx={{ color: '#ffffff', fontWeight: 600, fontSize: '0.875rem' }}>
+              {userRole || username || 'Admin'}
+            </Typography>
+            <KeyboardArrowDownIcon sx={{ color: '#ffffff', fontSize: '1.1rem' }} />
           </Box>
 
           <Menu
@@ -108,20 +163,32 @@ export function AppBar({
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             PaperProps={{
-              elevation: 3,
-              sx: { minWidth: 180, mt: 1, borderRadius: 2 },
+              elevation: 4,
+              sx: {
+                minWidth: 180,
+                mt: 1,
+                borderRadius: '10px',
+                bgcolor: '#0f1338',
+                color: '#ffffff',
+                border: '1px solid rgba(255,255,255,0.1)',
+                '& .MuiMenuItem-root': {
+                  py: 1,
+                  fontSize: '0.875rem',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+                },
+              },
             }}
           >
             <MenuItem onClick={() => { handleClose(); if (onProfileClick) onProfileClick(); }}>
-              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+              <ListItemIcon><PersonIcon fontSize="small" sx={{ color: '#b9c0e8' }} /></ListItemIcon>
               Profile
             </MenuItem>
             <MenuItem onClick={() => { handleClose(); if (onSettingsClick) onSettingsClick(); }}>
-              <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
+              <ListItemIcon><SettingsIcon fontSize="small" sx={{ color: '#b9c0e8' }} /></ListItemIcon>
               Settings
             </MenuItem>
-            <Divider />
-            <MenuItem onClick={() => { handleClose(); if (onLogoutClick) onLogoutClick(); }} sx={{ color: 'error.main' }}>
+            <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+            <MenuItem onClick={() => { handleClose(); if (onLogoutClick) onLogoutClick(); }} sx={{ color: '#ff6b6b' }}>
               <ListItemIcon><LogoutIcon fontSize="small" color="error" /></ListItemIcon>
               Logout
             </MenuItem>

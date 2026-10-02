@@ -1,19 +1,16 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 24px;
+  width: 100%;
+  padding: 0;
 `;
 
 export const TableContainer = styled.div`
-  height: 300px;
+  width: 100%;
+  min-height: 400px;
   margin-left: 0px;
   margin-right: 0px;
-  @media (max-width: 37.5rem) {
-    width: calc(100vw - 2.5rem);
-  }
-  @media (min-width: 37.5rem) and (max-width: 48rem) {
-    width: calc(100vw - 5rem);
-  }
+  flex: 1;
 `;
 
 export const TopBarContainer = styled.div`

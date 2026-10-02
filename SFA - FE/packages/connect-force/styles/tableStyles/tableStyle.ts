@@ -17,86 +17,9 @@ const dataGridStyle = {
   padding: "0px",
   boxShadow: "none",
   background: "unset",
-  // Default height for extra small devices and below
-  height: "35vh",
-  "@media (min-width: 555px)": {
-    height: "38vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 560px)": {
-    height: "36vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 562px)": {
-    height: "37vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 565px)": {
-    height: "38vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 570px)": {
-    height: "39vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 576px)": {
-    height: "40vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 578px)": {
-    height: "41vh", // Small devices (tablets, 576px and up)
-  },
-  "@media (min-width: 768px)": {
-    height: "42vh", // Medium devices (desktops, 768px and up)
-  },
-  "@media (min-width: 992px)": {
-    height: "43vh", // Large devices (large desktops, 992px and up)
-  },
-  "@media (min-width: 1200px)": {
-    height: "55vh", // Extra large devices (very large desktops, 1200px and up)
-  },
-  "@media (min-width: 1300px)": {
-    height: "60vh", // Extra extra large devices (1300px and up)
-  },
-  "@media (min-width: 1350px)": {
-    height: "65vh", // Extra extra large devices (1350px and up)
-  },
-  "@media (min-width: 1400px)": {
-    height: "70vh", // Extra extra large devices (1400px and up)
-  },
-  "@media (min-width: 1450px)": {
-    height: "72vh", // Extra extra large devices (1450px and up)
-  },
-  "@media (min-width: 1475px)": {
-    height: "75vh", // Extra extra large devices (1450px and up)
-  },
-  "@media (min-width: 1500px)": {
-    height: "76vh", // Extra extra large devices (1500px and up)
-  },
-  "@media (min-width: 1525px)": {
-    height: "77vh", // Extra extra large devices (1500px and up)
-  },
-  "@media (min-width: 1550px)": {
-    height: "78vh", // Extra extra large devices (1500px and up)
-  },
-  "@media (min-width: 1575px)": {
-    height: "79vh", // Extra extra large devices (1500px and up)
-  },
-  "@media (min-width: 1600px)": {
-    height: "80vh", // Extra extra large devices (1600px and up)
-  },
-  "@media (min-width: 1650px)": {
-    height: "81vh", // Extra extra large devices (1650px and up)
-  },
-  "@media (min-width: 1670px)": {
-    height: "82vh", // Extra extra large devices (1670px and up)
-  },
-  "@media (min-width: 1700px)": {
-    height: "83vh", // Extra extra large devices (1700px and up)
-  },
-  "@media (min-width: 1800px)": {
-    height: "84vh", // Extra extra large devices (1800px and up)
-  },
-  "@media (min-width: 1900px)": {
-    height: "85vh", // Extra extra large devices (1900px and up)
-  },
-  "@media (min-width: 2000px)": {
-    height: "86vh", // Extra extra large devices (2000px and up)
-  },
+  width: "100%",
+  flex: 1,
+  minHeight: "450px",
 };
 
 const focusDataGridStyle = {

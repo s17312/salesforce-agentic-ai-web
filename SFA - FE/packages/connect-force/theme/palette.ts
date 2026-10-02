@@ -33,21 +33,12 @@ const GREY = {
   900: '#161C24',
 };
 
-// const PRIMARY = {
-//   lighter: '#d5c9f8',
-//   light: '#a488f5',
-//   main: '#7F57F1',
-//   dark: '#693CEB',
-//   darker: '#4F2DB2',
-//   contrastText: '#fff',
-// };
-
 const PRIMARY = {
-  lighter: '#c9cff3',
-  light: '#D3D8FD',
-  main: '#070E4D',
-  dark: '#6575DC',
-  darker: '#4F2DB2',
+  lighter: '#e0dcf7',
+  light: '#9da5ce',
+  main: '#0a0d2c',
+  dark: '#4f2db2',
+  darker: '#080a25',
   contrastText: '#fff',
 };
 
@@ -96,8 +87,6 @@ const ERROR = {
   contrastText: '#fff',
 };
 
-
-
 const COMMON = {
   common: { black: '#000', white: '#fff' },
   primary: PRIMARY,
@@ -107,13 +96,13 @@ const COMMON = {
   warning: WARNING,
   error: ERROR,
   grey: GREY,
-  divider: alpha(GREY[500], 0.24),
+  divider: alpha('#0a0d2c', 0.12),
   action: {
-    hover: alpha(GREY[500], 0.08),
-    selected: alpha(GREY[500], 0.16),
+    hover: alpha('#0a0d2c', 0.06),
+    selected: alpha('#0a0d2c', 0.12),
     disabled: alpha(GREY[500], 0.8),
     disabledBackground: alpha(GREY[500], 0.24),
-    focus: alpha(GREY[500], 0.24),
+    focus: alpha('#0a0d2c', 0.12),
     hoverOpacity: 0.08,
     disabledOpacity: 0.48,
   },
@@ -124,14 +113,14 @@ export default function palette(themeMode: 'light' | 'dark') {
     ...COMMON,
     mode: 'light',
     text: {
-      primary: GREY[800],
-      secondary: GREY[600],
+      primary: '#0a0d2c',
+      secondary: '#5d638a',
       disabled: GREY[500],
     },
-    background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
+    background: { paper: '#f5f4fd', default: '#080a25', neutral: '#dedbf5' },
     action: {
       ...COMMON.action,
-      active: GREY[600],
+      active: '#0a0d2c',
     },
   } as const;
 

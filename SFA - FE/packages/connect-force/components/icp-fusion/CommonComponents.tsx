@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import {
   Box,
   Avatar,
@@ -97,10 +97,10 @@ export function UserInfo({ username, userEmail, role, avatarUrl }: any) {
   );
 }
 
-export function Copyright({ titleText = 'SFA Suite', companyName = 'ConnectForce', reservedText = 'All rights reserved.' }: any) {
+export function Copyright({ titleText = 'SFA Suite', companyName = 'VELORA', reservedText = 'Building software that moves businesses forward.' }: any) {
   return (
-    <Typography variant="caption" color="text.secondary" align="center" display="block" sx={{ py: 2 }}>
-      © {new Date().getFullYear()} {companyName}. {reservedText}
+    <Typography variant="caption" color="text.secondary" align="center" display="block" sx={{ py: 1 }}>
+      Designed & Developed by {companyName}. {reservedText}
     </Typography>
   );
 }

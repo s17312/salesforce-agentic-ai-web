@@ -155,7 +155,17 @@ export default function QuickSearchToolbar({
                   });
                 }
               }}
-              sx={{ minWidth: 120 }}
+              sx={{
+                minWidth: 120,
+                bgcolor: "#e6e4f5",
+                borderRadius: "10px",
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                color: "#0a0d2c",
+                height: "40px",
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
+              }}
             >
               <MenuItem value="All">All</MenuItem>
               {columns.map((col) => (
@@ -181,9 +191,19 @@ export default function QuickSearchToolbar({
               }
             }}
             sx={{
-              width: "30%",
+              width: "320px",
               "@media (max-width: 768px)": {
                 width: "100%",
+              },
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "#f0effb",
+                borderRadius: "10px",
+                height: "40px",
+                fontSize: "0.875rem",
+                color: "#0a0d2c",
+                "& fieldset": { border: "none" },
+                "&:hover fieldset": { border: "none" },
+                "&.Mui-focused fieldset": { border: "1px solid #0a0d2c" },
               },
             }}
             InputProps={{
