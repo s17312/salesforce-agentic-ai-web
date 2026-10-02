@@ -1,0 +1,61 @@
+# Ignore node_modules in the root and any subdirectories
+node_modules
+**/node_modules
+
+# Ignore the .pnpm directory in the root and any subdirectories
+.pnpm
+**/.pnpm
+
+# Ignore temporary files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore local environment configuration
+.env
+**/.env
+
+# Ignore test coverage directory
+coverage
+
+# Ignore logs
+logs
+*.log
+**/*.log
+
+# Ignore build outputs
+dist
+build
+**/dist
+**/build
+
+# Ignore cache directories for various tools
+.cache
+**/.cache
+.next
+**/.next
+
+# Ignore editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore Docker-related files
+Dockerfile
+.dockerignore
+docker-compose.yml
+**/Dockerfile
+**/docker-compose.yml
+
+# Ignore git-related files
+.git
+.gitignore
+**/.git
+**/.gitignore
+
+*.md

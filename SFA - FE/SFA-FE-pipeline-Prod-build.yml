@@ -1,0 +1,58 @@
+name : SFA FE Prod Backend Deployment Build - CI
+trigger:
+  branches:
+    include:
+      - 'release/prod/v*.*.*'
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+  - stage: BuildPush
+    displayName: 'SFA FE Prod Backend Build Image Stage'
+    jobs:
+      - job: BuildPush
+        displayName: 'SFA FE Prod Backend Build and Push Docker Image Job'
+        steps:
+          - task: Docker@2
+            displayName: 'SFA FE Prod Manasha Backend Build the Docker Image'
+            inputs:
+              command: build
+              repository: $(ImageRepository_Manasha)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              dockerfile: $(DockerfilePath)
+              tags: |
+                $(VersionNumber)
+                latest
+              arguments: >
+                --build-arg API_URL=$(API_URL_MANASHA)
+          - task: Docker@2
+            displayName: 'SFA FE Prod CJFood Backend Build the Docker Image'
+            inputs:
+              command: build
+              repository: $(ImageRepository_CJFood)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              dockerfile: $(DockerfilePath)
+              tags: |
+                $(VersionNumber)
+                latest
+              arguments: >
+                --build-arg API_URL=$(API_URL_CJF)
+          - task: Docker@2
+            displayName: 'SFA FE Prod Manasha Backend Push the Docker Image to Container Registry'
+            inputs:
+              command: push
+              repository: $(ImageRepository_Manasha)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              tags: |
+                $(VersionNumber)
+                latest
+          - task: Docker@2
+            displayName: 'SFA FE Prod CJFood Backend Push the Docker Image to Container Registry'
+            inputs:
+              command: push
+              repository: $(ImageRepository_CJFood)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              tags: |
+                $(VersionNumber)
+                latest

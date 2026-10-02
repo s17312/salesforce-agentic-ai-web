@@ -1,0 +1,2 @@
+PriceListTypeId,PriceListTypeName,StartDate,EndDate,PriceTypeName,CompanyId,ProductId,Rate,MRP,BatchNumber,Active
+PTL001,Price List Type One,9/11/2024,9/15/2024,Price Type One1,aaa,TestOption,123423,123423,RT345,TRUE

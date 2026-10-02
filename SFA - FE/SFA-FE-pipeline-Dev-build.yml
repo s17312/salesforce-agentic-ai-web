@@ -1,0 +1,38 @@
+name : SFA FE Dev Backend Deployment Build - CI
+trigger:
+  tags:
+    include:
+      - v*.*.*
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+  - stage: DEV_BuildPush
+    displayName: 'SFA FE Dev Backend Build Image Stage'
+    jobs:
+      - job: DEV_BuildPush
+        displayName: 'SFA FE Dev Backend Build and Push Docker Image Job'
+        steps:
+          - task: Docker@2
+            displayName: 'SFA FE Dev Backend Build the Docker Image'
+            inputs:
+              command: build
+              repository: $(dev_ImageRepository)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              dockerfile: $(DockerfilePath)
+              tags: |
+                $(VersionNumber)
+                latest
+              arguments: >
+                --build-arg API_URL=$(API_URL)
+
+          - task: Docker@2
+            displayName: 'SFA FE Dev Backend Push the Docker Image to Container Registry'
+            inputs:
+              command: push
+              repository: $(dev_ImageRepository)
+              containerRegistry: $(DockerRegistryServiceConnection)
+              tags: |
+                $(VersionNumber)
+                latest

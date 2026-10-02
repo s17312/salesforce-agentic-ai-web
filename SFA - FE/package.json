@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter=connect-force dev",
+    "build": "pnpm --filter=connect-force build",
+    "start": "pnpm --filter=connect-force start",
+    "lint": "pnpm --filter=connect-force lint",
+    "release": "pnpm --filter=connect-force release"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}

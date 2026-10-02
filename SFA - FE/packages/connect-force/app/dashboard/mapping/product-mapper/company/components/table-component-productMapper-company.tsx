@@ -1,0 +1,46 @@
+"use client";
+
+import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef } from "@mui/x-data-grid";
+
+export const ProductMapperTableHeadingsCompany: GridColDef[] = [
+  {
+    field: "companyId",
+    headerName: "Company ID",
+    flex: 1,
+    disableColumnMenu: true,
+    minWidth: 100,
+  },
+  {
+    field: "companyName",
+    headerName: "Company Name",
+    flex: 1,
+    disableColumnMenu: true,
+    minWidth: 200,
+    valueGetter: (params: any) => params.row.companyName || "-",
+  },
+  {
+    field: "legalEntryType.legalEntryTypeName",
+    headerName: "Legal Entity type",
+    flex: 1,
+    disableColumnMenu: true,
+    minWidth: 200,
+    valueGetter: (params: any) =>
+      params.row.legalEntryType?.legalEntryTypeName || "-",
+  },
+  {
+    field: "email",
+    headerName: "Email Address",
+    flex: 1,
+    disableColumnMenu: true,
+    minWidth: 200,
+    valueGetter: (params: any) => params.row.email || "-",
+  },
+  {
+    ...GRID_CHECKBOX_SELECTION_COL_DEF,
+    width: 100,
+  },
+];
+
+export const tableOptions = {
+  rowsPerPageOptions: [5, 10, 15, 100],
+};

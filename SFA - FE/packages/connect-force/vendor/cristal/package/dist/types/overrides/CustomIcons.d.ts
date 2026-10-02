@@ -1,0 +1,17 @@
+import React from 'react';
+import { SvgIconProps } from '@mui/material';
+export declare function CloseIcon(props: SvgIconProps): React.JSX.Element;
+export declare function StarIcon(props: SvgIconProps): React.JSX.Element;
+export declare function InfoIcon(props: SvgIconProps): React.JSX.Element;
+export declare function WarningIcon(props: SvgIconProps): React.JSX.Element;
+export declare function SuccessIcon(props: SvgIconProps): React.JSX.Element;
+export declare function ErrorIcon(props: SvgIconProps): React.JSX.Element;
+export declare function CheckboxIcon(props: SvgIconProps): React.JSX.Element;
+export declare function CheckboxCheckedIcon(props: SvgIconProps): React.JSX.Element;
+export declare function CheckboxIndeterminateIcon(props: SvgIconProps): React.JSX.Element;
+export declare function RadioIcon(props: SvgIconProps): React.JSX.Element;
+export declare function RadioCheckedIcon(props: SvgIconProps): React.JSX.Element;
+export declare function InputSelectIcon(props: SvgIconProps): React.JSX.Element;
+export declare function TreeViewCollapseIcon(props: SvgIconProps): React.JSX.Element;
+export declare function TreeViewExpandIcon(props: SvgIconProps): React.JSX.Element;
+export declare function TreeViewEndIcon(props: SvgIconProps): React.JSX.Element;
