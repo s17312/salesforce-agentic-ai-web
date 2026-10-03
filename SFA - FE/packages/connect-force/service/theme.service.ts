@@ -5,7 +5,7 @@ export interface DBThemeRecord extends ThemePalette {
 }
 
 const THEME_DB_STORAGE_KEY = 'connect_force_theme_db_records';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api/';
 
 const ALL_PRESET_THEMES: Record<string, ThemePalette> = {
   ...SYSTEM_THEMES,
@@ -20,61 +20,12 @@ export async function getThemeSettingsFromDB(): Promise<{
   selectedThemeKey: string;
   themesMap: Record<string, DBThemeRecord>;
 }> {
-  // 1. Try Backend API first
-  try {
-    const res = await fetch(`${API_URL}theme?userId=default_user`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const items = data.result || data;
-      if (Array.isArray(items) && items.length > 0) {
-        const themesMap: Record<string, DBThemeRecord> = {};
-        let selectedKey = 'blue';
-
-        items.forEach((item: any) => {
-          const key = item.themeKey || item.key;
-          if (!key) return;
-          const isSelected = !!item.isSelected;
-          if (isSelected) selectedKey = key;
-
-          const basePalette: ThemePalette = ALL_PRESET_THEMES[key] || generateCustomThemeFromColor(item.primaryMain || '#7A67EE', item.name || key);
-
-          themesMap[key] = {
-            ...basePalette,
-            key,
-            name: item.name || basePalette.name,
-            category: (item.category || basePalette.category) as 'system' | 'custom',
-            primaryMain: item.primaryMain || basePalette.primaryMain,
-            sidebarBg: item.sidebarBg || basePalette.sidebarBg,
-            outerBg: item.outerBg || basePalette.outerBg,
-            activePill: item.activePill || basePalette.activePill,
-            paperBg: item.paperBg || basePalette.paperBg,
-            headerTint: item.headerTint || basePalette.headerTint,
-            swatches: item.swatchesJson ? JSON.parse(item.swatchesJson) : basePalette.swatches,
-            isSelected,
-          };
-        });
-
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(THEME_DB_STORAGE_KEY, JSON.stringify(themesMap));
-          localStorage.setItem('connect_force_theme_key', selectedKey);
-        }
-
-        return { selectedThemeKey: selectedKey, themesMap };
-      }
-    }
-  } catch (e) {
-    console.log('Backend API unreachable, using local theme DB fallback');
-  }
-
-  // 2. Local Storage Fallback
+  // 1. Try Local Storage first for instantaneous rendering
   try {
     const raw = typeof window !== 'undefined' ? localStorage.getItem(THEME_DB_STORAGE_KEY) : null;
     if (raw) {
       const records: Record<string, DBThemeRecord> = JSON.parse(raw);
-      let selectedKey = 'blue';
+      let selectedKey = 'velora-purple';
       Object.values(records).forEach((r) => {
         if (r.isSelected) {
           selectedKey = r.key;
@@ -86,23 +37,22 @@ export async function getThemeSettingsFromDB(): Promise<{
     console.error('Error loading theme records from local DB:', e);
   }
 
-  // 3. Initial default DB state: system + custom themes, Blue isSelected: true
+  // 2. Initial default state: velora-purple selected
   const initialMap: Record<string, DBThemeRecord> = {};
   const allInitial = { ...SYSTEM_THEMES, ...DEFAULT_CUSTOM_THEMES };
 
   Object.values(allInitial).forEach((t) => {
     initialMap[t.key] = {
       ...t,
-      isSelected: t.key === 'blue',
+      isSelected: t.key === 'velora-purple' || t.key === 'purple',
     };
   });
 
-  return { selectedThemeKey: 'blue', themesMap: initialMap };
+  return { selectedThemeKey: 'velora-purple', themesMap: initialMap };
 }
 
 /**
- * Save selected theme to DB.
- * Sets isSelected: true on selectedKey, and isSelected: false on all other themes.
+ * Save selected theme to DB via POST user/theme endpoint.
  */
 export async function saveThemeSelectionToDB(
   selectedKey: string,
@@ -127,16 +77,16 @@ export async function saveThemeSelectionToDB(
   }
 
   try {
-    await fetch(`${API_URL}theme/select`, {
+    await fetch(`${API_URL}user/theme`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        themeKey: selectedKey,
-        userId: 'default_user',
+        userId: 1,
+        themeColor: selectedKey,
       }),
     });
   } catch (e) {
-    console.log('Backend API unreachable during selectTheme, synced locally.');
+    console.log('Backend API unreachable during updateTheme, synced locally.');
   }
 
   return updatedMap;
