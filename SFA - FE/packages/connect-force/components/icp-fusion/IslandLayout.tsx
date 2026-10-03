@@ -2,6 +2,8 @@ import React, { forwardRef, ReactNode, useState } from 'react';
 import { Box, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import SideBar from './SideBar';
 import AppBar from './AppBar';
+import AppearanceDrawer from '@/components/theme/AppearanceDrawer';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export interface IslandLayoutProps {
   sideBarProps?: any;
@@ -17,6 +19,7 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { currentTheme } = useThemeContext();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -31,7 +34,8 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
         height: '100vh',
         width: '100vw',
         overflow: 'hidden',
-        backgroundColor: '#080a25',
+        backgroundColor: currentTheme?.outerBg || '#080a25',
+        transition: 'background-color 0.3s ease',
       }}
     >
       {/* Top Header Bar */}
@@ -64,7 +68,7 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
               '& .MuiDrawer-paper': {
                 boxSizing: 'border-box',
                 width: 260,
-                bgcolor: '#0f1338',
+                bgcolor: currentTheme?.sidebarBg || '#0f1338',
               },
             }}
           >
@@ -100,17 +104,18 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
             flexDirection: 'column',
           }}
         >
-          {/* Island Card with reduced border radius */}
+          {/* Island Card */}
           <Box
             sx={{
               flexGrow: 1,
-              bgcolor: '#f5f4fd',
-              borderRadius: '16px', // Reduced border radius (Point 1)
+              bgcolor: currentTheme?.paperBg || '#f5f4fd',
+              borderRadius: '16px',
               p: { xs: 2, sm: 3 },
               display: 'flex',
               flexDirection: 'column',
               overflowY: 'auto',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+              transition: 'background-color 0.3s ease',
               '&::-webkit-scrollbar': {
                 width: '6px',
               },
@@ -124,6 +129,9 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
           </Box>
         </Box>
       </Box>
+
+      {/* Right-Side Appearance Drawer matching Image 1 */}
+      <AppearanceDrawer />
     </Box>
   );
 });

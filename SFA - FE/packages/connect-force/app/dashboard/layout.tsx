@@ -5,19 +5,14 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "../../redux/store";
 import { ToastContainer } from "react-toastify";
-import { IslandLayout } from "@icp/react-fusion";
-import { navItems } from "@/data/navigation-items";
 import styled from "styled-components";
-import { useRouter, usePathname } from "next/navigation";
-import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "@/theme";
+import { usePathname } from "next/navigation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import SnackbarProvider from "@/components/snackbar/SnackbarProvider";
 import MainLayout from "@/layout/MainLayout";
-import { SessionProvider, useSession } from "next-auth/react";
 import AuthProvider from "../context/AuthProvider";
-
+import { CustomThemeProvider } from "@/context/ThemeContext";
 
 export default function RootLayout({ children }: PropsWithChildren) {
   let pathname = usePathname();
@@ -28,7 +23,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   }, [pathname]);
 
   return (
-    <html lang="en" >
+    <html lang="en">
       <body
         style={{
           margin: 0,
@@ -42,8 +37,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       >
         <AuthProvider>
           <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
+            <CustomThemeProvider>
               <CustomToastContainer
                 className="toast-container"
                 autoClose={3000}
@@ -63,7 +57,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   </SnackbarProvider>
                 </LocalizationProvider>
               </Provider>
-            </ThemeProvider>
+            </CustomThemeProvider>
           </AppRouterCacheProvider>
         </AuthProvider>
       </body>

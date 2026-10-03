@@ -22,6 +22,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useRouter, usePathname } from 'next/navigation';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export interface SideBarProps {
   navItems?: any[];
@@ -65,6 +66,7 @@ export function SideBar({
   const router = useRouter();
   const pathname = usePathname();
   const activePath = currentPath || pathname;
+  const { currentTheme } = useThemeContext();
 
   const sections = navItems.length > 0 ? navItems : items;
 
@@ -116,12 +118,13 @@ export function SideBar({
       sx={{
         width: 260,
         flexShrink: 0,
-        bgcolor: '#0f1338',
+        bgcolor: currentTheme?.sidebarBg || '#0f1338',
         borderRight: '1px solid rgba(255, 255, 255, 0.05)',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden', // Outer sidebar does not scroll!
+        overflow: 'hidden',
+        transition: 'background-color 0.3s ease',
       }}
     >
       {/* Scrollable Nav List Section */}
@@ -176,16 +179,16 @@ export function SideBar({
                         selected={isSelected}
                         onClick={() => handleItemClick(item, iIdx, sIdx)}
                         sx={{
-                          borderRadius: '10px', // Reduced border radius for modern sleek look (Point 1)
+                          borderRadius: '10px',
                           mx: 1.5,
                           px: 1.8,
                           py: 0.8,
-                          bgcolor: isSelected ? '#4b5588' : '#2f3563',
+                          bgcolor: isSelected ? (currentTheme?.activePill || '#4b5588') : (currentTheme?.unselectedPill || '#2f3563'),
                           color: isSelected ? '#ffffff' : '#d0d5f2',
                           transition: 'all 0.2s ease',
                           boxShadow: isSelected ? '0 3px 10px rgba(0,0,0,0.12)' : 'none',
                           '&:hover': {
-                            bgcolor: isSelected ? '#576399' : '#3b4278',
+                            bgcolor: isSelected ? (currentTheme?.activePill || '#576399') : 'rgba(255,255,255,0.15)',
                             color: '#ffffff',
                             '& .MuiListItemIcon-root': { color: '#ffffff' },
                           },
@@ -232,7 +235,7 @@ export function SideBar({
                                   py: 0.5,
                                   px: 1.4,
                                   my: 0.3,
-                                  borderRadius: '8px', // Reduced border radius for sub-items
+                                  borderRadius: '8px',
                                   color: isSubSelected ? '#ffffff' : '#d0d5f2',
                                   bgcolor: isSubSelected ? 'rgba(255,255,255,0.15)' : 'transparent',
                                   '&:hover': {
@@ -275,16 +278,17 @@ export function SideBar({
         </List>
       </Box>
 
-      {/* Solid Static Footer - VELORA Branding (Point 2 & Point 3) */}
+      {/* Solid Static Footer - VELORA Branding */}
       <Box
         sx={{
           p: 2,
           textAlign: 'center',
           borderTop: '1px solid rgba(255,255,255,0.08)',
-          bgcolor: '#0f1338', // Solid static background
+          bgcolor: currentTheme?.sidebarBg || '#0f1338',
           flexShrink: 0,
           position: 'relative',
           zIndex: 10,
+          transition: 'background-color 0.3s ease',
         }}
       >
         <Typography variant="caption" display="block" sx={{ color: '#8890b5', fontSize: '0.7rem' }}>

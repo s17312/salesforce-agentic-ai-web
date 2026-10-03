@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   Divider,
   Button,
+  Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -19,7 +20,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import PaletteIcon from '@mui/icons-material/Palette';
 import { SaveIcon } from '@/components/icons/saveIcon';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export function AppBar({
   username,
@@ -34,6 +37,8 @@ export function AppBar({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  const { openAppearanceDrawer, currentTheme } = useThemeContext();
+
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -42,16 +47,23 @@ export function AppBar({
     setAnchorEl(null);
   };
 
+  const handleSettingsClick = () => {
+    handleClose();
+    if (onSettingsClick) onSettingsClick();
+    openAppearanceDrawer(); // Opens right-side Appearance drawer as shown in Image 3
+  };
+
   return (
     <MuiAppBar
       position="static"
       elevation={0}
       sx={{
-        backgroundColor: '#080a25',
+        backgroundColor: currentTheme?.outerBg || '#080a25',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         zIndex: 1200,
         height: '60px',
         justifyContent: 'center',
+        transition: 'background-color 0.3s ease',
       }}
       {...props}
     >
@@ -79,7 +91,7 @@ export function AppBar({
             sx={{
               backgroundColor: 'rgba(255, 255, 255, 0.18)',
               color: '#ffffff',
-              borderRadius: '10px', // Reduced border-radius (Point 1)
+              borderRadius: '10px',
               px: 2,
               py: 0.6,
               textTransform: 'none',
@@ -112,7 +124,7 @@ export function AppBar({
               justifyContent: 'center',
             }}
           >
-            <BarChartIcon sx={{ color: '#0a0d2c', fontSize: '1.25rem' }} />
+            <BarChartIcon sx={{ color: currentTheme?.primaryMain || '#0a0d2c', fontSize: '1.25rem' }} />
           </Box>
           <Typography
             variant="h6"
@@ -128,8 +140,25 @@ export function AppBar({
           </Typography>
         </Box>
 
-        {/* Right Side: Profile & Role Dropdown */}
-        <Stack direction="row" spacing={1} alignItems="center">
+        {/* Right Side: Theme Palette Shortcut + Profile & Role Dropdown */}
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          {/* Quick Palette Button to open Appearance Drawer */}
+          <Tooltip title="Theme & Appearance">
+            <IconButton
+              onClick={openAppearanceDrawer}
+              sx={{
+                color: '#ffffff',
+                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                p: 0.9,
+                borderRadius: '8px',
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' },
+              }}
+            >
+              <PaletteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          {/* User Profile */}
           <Box
             onClick={handleAvatarClick}
             sx={{
@@ -168,7 +197,7 @@ export function AppBar({
                 minWidth: 180,
                 mt: 1,
                 borderRadius: '10px',
-                bgcolor: '#0f1338',
+                bgcolor: currentTheme?.sidebarBg || '#0f1338',
                 color: '#ffffff',
                 border: '1px solid rgba(255,255,255,0.1)',
                 '& .MuiMenuItem-root': {
@@ -183,10 +212,13 @@ export function AppBar({
               <ListItemIcon><PersonIcon fontSize="small" sx={{ color: '#b9c0e8' }} /></ListItemIcon>
               Profile
             </MenuItem>
-            <MenuItem onClick={() => { handleClose(); if (onSettingsClick) onSettingsClick(); }}>
+
+            {/* Settings Menu Item triggers Appearance Drawer as requested in Image 3 */}
+            <MenuItem onClick={handleSettingsClick}>
               <ListItemIcon><SettingsIcon fontSize="small" sx={{ color: '#b9c0e8' }} /></ListItemIcon>
               Settings
             </MenuItem>
+
             <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
             <MenuItem onClick={() => { handleClose(); if (onLogoutClick) onLogoutClick(); }} sx={{ color: '#ff6b6b' }}>
               <ListItemIcon><LogoutIcon fontSize="small" color="error" /></ListItemIcon>

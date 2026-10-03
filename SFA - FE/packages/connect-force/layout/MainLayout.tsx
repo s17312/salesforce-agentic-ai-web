@@ -12,8 +12,11 @@ import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { ConnectforceLogo } from "@/assets/icons/connectforce";
 
+import { useThemeContext } from "@/context/ThemeContext";
+
 const MainLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
+  const { currentTheme } = useThemeContext();
   const { data: session } = useSession({
     required: true,
   });
@@ -61,7 +64,8 @@ const MainLayout = ({ children }: PropsWithChildren) => {
           alignItems: "center",
           justifyContent: "center",
           height: "100vh",
-          backgroundColor: "#070E4D",
+          backgroundColor: currentTheme?.outerBg || "#080a25",
+          transition: "background-color 0.3s ease",
           flexDirection: "column",
         }}
       >

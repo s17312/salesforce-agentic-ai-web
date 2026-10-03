@@ -23,6 +23,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import PaidIcon from "@mui/icons-material/Paid";
+import PaletteIcon from "@mui/icons-material/Palette";
 
 export const navItems = [
   {
@@ -437,6 +438,13 @@ export const navItems = [
     subheader: "Settings",
     path: PATH_DASHBOARD.deliveryMethod.list,
     items: [
+      {
+        id: 20000099,
+        label: "Theme & Appearance",
+        icon: <PaletteIcon />,
+        path: "/dashboard/theme",
+        subItems: [],
+      },
       {
         id: 20000016,
         label: "Delivery Method",
