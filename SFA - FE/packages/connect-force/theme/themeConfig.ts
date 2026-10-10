@@ -1,3 +1,9 @@
+/**
+ * SFA Theme Configuration
+ * Modern, vibrant palettes inspired by Color Hunt (https://colorhunt.co/)
+ * Structured as 4-color harmony systems: [Light Tint, Active Accent, Brand Primary, Dark Base]
+ */
+
 export interface ThemePalette {
   key: string;
   name: string;
@@ -15,204 +21,366 @@ export interface ThemePalette {
   swatches: string[];
 }
 
+/**
+ * Curated System Themes based on Color Hunt Top Trending & Popular Palettes
+ */
 export const SYSTEM_THEMES: Record<string, ThemePalette> = {
+  'velora-purple': {
+    key: 'velora-purple',
+    name: 'Velora Purple',
+    category: 'system',
+    primaryMain: '#6366f1', // Modern Indigo/Violet
+    primaryDark: '#4f46e5',
+    outerBg: '#f4f3fb',
+    sidebarBg: '#ffffff',
+    activePill: '#6366f1',
+    unselectedPill: '#eeedf8',
+    paperBg: '#ffffff',
+    headerTint: '#ede9fe',
+    textPrimary: '#1e1b4b',
+    textSecondary: '#6366f1',
+    swatches: ['#ede9fe', '#eeedf8', '#6366f1', '#f4f3fb'],
+  },
   blue: {
     key: 'blue',
-    name: 'Blue',
+    name: 'Ocean Sapphire',
     category: 'system',
-    primaryMain: '#0a0d2c',
-    primaryDark: '#4f2db2',
-    outerBg: '#080a25',
-    sidebarBg: '#0f1338',
-    activePill: '#4b5588',
-    unselectedPill: '#2f3563',
-    paperBg: '#f5f4fd',
-    headerTint: '#dedbf5',
-    textPrimary: '#0a0d2c',
-    textSecondary: '#5d638a',
-    swatches: ['#9da5ce', '#4b5588', '#0a0d2c', '#080a25'],
+    primaryMain: '#2563eb', // Vibrant Royal Blue
+    primaryDark: '#1d4ed8',
+    outerBg: '#f0f5fc',
+    sidebarBg: '#ffffff',
+    activePill: '#2563eb',
+    unselectedPill: '#e2eefb',
+    paperBg: '#ffffff',
+    headerTint: '#dbeafe',
+    textPrimary: '#0f172a',
+    textSecondary: '#2563eb',
+    swatches: ['#dbeafe', '#e2eefb', '#2563eb', '#f0f5fc'],
   },
   teal: {
     key: 'teal',
-    name: 'Teal',
+    name: 'Nordic Teal',
     category: 'system',
-    primaryMain: '#043e35',
-    primaryDark: '#005b4f',
-    outerBg: '#02231e',
-    sidebarBg: '#03332c',
-    activePill: '#00897b',
-    unselectedPill: '#084e44',
-    paperBg: '#f0fdfa',
-    headerTint: '#b2dfdb',
-    textPrimary: '#02231e',
-    textSecondary: '#00695c',
-    swatches: ['#80cbd4', '#00897b', '#043e35', '#02231e'],
+    primaryMain: '#0d9488', // Crisp Teal
+    primaryDark: '#0f766e',
+    outerBg: '#f0fdf9',
+    sidebarBg: '#ffffff',
+    activePill: '#0d9488',
+    unselectedPill: '#e0f6f2',
+    paperBg: '#ffffff',
+    headerTint: '#ccfbf1',
+    textPrimary: '#134e4a',
+    textSecondary: '#0d9488',
+    swatches: ['#ccfbf1', '#e0f6f2', '#0d9488', '#f0fdf9'],
   },
   rose: {
     key: 'rose',
-    name: 'Rose',
+    name: 'Sunset Coral',
     category: 'system',
-    primaryMain: '#4a0e17',
-    primaryDark: '#881337',
-    outerBg: '#26070c',
-    sidebarBg: '#3a0a12',
-    activePill: '#b81d40',
-    unselectedPill: '#5c1322',
-    paperBg: '#fff1f2',
-    headerTint: '#fecdd3',
-    textPrimary: '#4a0e17',
-    textSecondary: '#9f1239',
-    swatches: ['#f5b5c3', '#b81d40', '#4a0e17', '#26070c'],
+    primaryMain: '#f43f5e', // Vibrant Rose/Coral
+    primaryDark: '#e11d48',
+    outerBg: '#fff1f4',
+    sidebarBg: '#ffffff',
+    activePill: '#f43f5e',
+    unselectedPill: '#ffe4ea',
+    paperBg: '#ffffff',
+    headerTint: '#ffe4e6',
+    textPrimary: '#881337',
+    textSecondary: '#e11d48',
+    swatches: ['#ffe4e6', '#ffe4ea', '#f43f5e', '#fff1f4'],
   },
   amber: {
     key: 'amber',
-    name: 'Amber',
+    name: 'Amber Gold',
     category: 'system',
-    primaryMain: '#422006',
-    primaryDark: '#78350f',
-    outerBg: '#241002',
-    sidebarBg: '#351904',
+    primaryMain: '#d97706', // Warm Amber
+    primaryDark: '#b45309',
+    outerBg: '#fffbf0',
+    sidebarBg: '#ffffff',
     activePill: '#d97706',
-    unselectedPill: '#542907',
-    paperBg: '#fffbeb',
-    headerTint: '#fde68a',
-    textPrimary: '#422006',
+    unselectedPill: '#fef3d8',
+    paperBg: '#ffffff',
+    headerTint: '#fef3c7',
+    textPrimary: '#78350f',
     textSecondary: '#b45309',
-    swatches: ['#fde68a', '#d97706', '#422006', '#241002'],
+    swatches: ['#fef3c7', '#fef3d8', '#d97706', '#fffbf0'],
   },
-  violet: {
-    key: 'violet',
-    name: 'Violet',
+  'midnight-gold': {
+    key: 'midnight-gold',
+    name: 'Classic Indigo & Cream',
     category: 'system',
-    primaryMain: '#3b0764',
-    primaryDark: '#581c87',
-    outerBg: '#240342',
-    sidebarBg: '#2e0552',
-    activePill: '#7c3aed',
-    unselectedPill: '#4c1d95',
-    paperBg: '#f5f3ff',
-    headerTint: '#ddd6fe',
-    textPrimary: '#3b0764',
-    textSecondary: '#6d28d9',
-    swatches: ['#ddd6fe', '#7c3aed', '#3b0764', '#240342'],
+    primaryMain: '#22396f', // Classic Indigo & Cream
+    primaryDark: '#13254e',
+    outerBg: '#f7f6f0',
+    sidebarBg: '#ffffff',
+    activePill: '#22396f',
+    unselectedPill: '#ede9db',
+    paperBg: '#ffffff',
+    headerTint: '#fcf1d0',
+    textPrimary: '#0f172a',
+    textSecondary: '#22396f',
+    swatches: ['#fcf1d0', '#ede9db', '#22396f', '#f7f6f0'],
   },
 };
 
+/**
+ * Curated Custom Themes inspired by Color Hunt Palettes (Clean, Light Palettes)
+ */
 export const DEFAULT_CUSTOM_THEMES: Record<string, ThemePalette> = {
   rust: {
     key: 'rust',
-    name: 'Rust',
+    name: 'Tuscan Terracotta',
     category: 'custom',
-    primaryMain: '#451a03',
-    primaryDark: '#7c2d12',
-    outerBg: '#290e02',
-    sidebarBg: '#371402',
+    primaryMain: '#c2410c',
+    primaryDark: '#9a3412',
+    outerBg: '#fff7ed',
+    sidebarBg: '#ffffff',
     activePill: '#c2410c',
-    unselectedPill: '#5c2206',
-    paperBg: '#fff7ed',
-    headerTint: '#fed7aa',
-    textPrimary: '#451a03',
-    textSecondary: '#9a3412',
-    swatches: ['#fed7aa', '#c2410c', '#451a03', '#290e02'],
+    unselectedPill: '#ffedd5',
+    paperBg: '#ffffff',
+    headerTint: '#ffedd5',
+    textPrimary: '#7c2d12',
+    textSecondary: '#c2410c',
+    swatches: ['#ffedd5', '#ffedd5', '#c2410c', '#fff7ed'],
   },
   pink: {
     key: 'pink',
-    name: 'Pink',
+    name: 'Electric Blossom',
     category: 'custom',
-    primaryMain: '#500724',
-    primaryDark: '#831843',
-    outerBg: '#2d0313',
-    sidebarBg: '#3f051c',
-    activePill: '#db2777',
-    unselectedPill: '#650c31',
-    paperBg: '#fdf2f8',
-    headerTint: '#fbcfe8',
-    textPrimary: '#500724',
-    textSecondary: '#be185d',
-    swatches: ['#fbcfe8', '#db2777', '#500724', '#2d0313'],
+    primaryMain: '#ec4899',
+    primaryDark: '#db2777',
+    outerBg: '#fdf2f8',
+    sidebarBg: '#ffffff',
+    activePill: '#ec4899',
+    unselectedPill: '#fce7f3',
+    paperBg: '#ffffff',
+    headerTint: '#fce7f3',
+    textPrimary: '#831843',
+    textSecondary: '#db2777',
+    swatches: ['#fce7f3', '#fce7f3', '#ec4899', '#fdf2f8'],
   },
   indigo: {
     key: 'indigo',
-    name: 'Indigo',
+    name: 'Deep Indigo',
     category: 'custom',
-    primaryMain: '#1e1b4b',
-    primaryDark: '#312e81',
-    outerBg: '#110e33',
-    sidebarBg: '#18153f',
-    activePill: '#4338ca',
-    unselectedPill: '#2c2770',
-    paperBg: '#f5f7ff',
+    primaryMain: '#4f46e5',
+    primaryDark: '#3730a3',
+    outerBg: '#f5f7ff',
+    sidebarBg: '#ffffff',
+    activePill: '#4f46e5',
+    unselectedPill: '#e0e7ff',
+    paperBg: '#ffffff',
     headerTint: '#c7d2fe',
     textPrimary: '#1e1b4b',
-    textSecondary: '#3730a3',
-    swatches: ['#c7d2fe', '#4338ca', '#1e1b4b', '#110e33'],
+    textSecondary: '#4338ca',
+    swatches: ['#c7d2fe', '#e0e7ff', '#4f46e5', '#f5f7ff'],
   },
   orange: {
     key: 'orange',
-    name: 'Orange',
+    name: 'Sunset Flame',
     category: 'custom',
-    primaryMain: '#431407',
-    primaryDark: '#7c2d12',
-    outerBg: '#270a04',
-    sidebarBg: '#350f05',
+    primaryMain: '#ea580c',
+    primaryDark: '#c2410c',
+    outerBg: '#fff7ed',
+    sidebarBg: '#ffffff',
     activePill: '#ea580c',
-    unselectedPill: '#5a1909',
-    paperBg: '#fff7ed',
+    unselectedPill: '#fed7aa',
+    paperBg: '#ffffff',
     headerTint: '#fed7aa',
-    textPrimary: '#431407',
-    textSecondary: '#c2410c',
-    swatches: ['#fed7aa', '#ea580c', '#431407', '#270a04'],
+    textPrimary: '#7c2d12',
+    textSecondary: '#ea580c',
+    swatches: ['#fed7aa', '#fed7aa', '#ea580c', '#fff7ed'],
   },
   plum: {
     key: 'plum',
-    name: 'Plum',
+    name: 'Royal Amethyst',
     category: 'custom',
-    primaryMain: '#3a0ca3',
-    primaryDark: '#480ca8',
-    outerBg: '#21045a',
-    sidebarBg: '#2d097e',
+    primaryMain: '#7209b7',
+    primaryDark: '#560bad',
+    outerBg: '#faf5ff',
+    sidebarBg: '#ffffff',
     activePill: '#7209b7',
-    unselectedPill: '#4a129c',
-    paperBg: '#faf5ff',
-    headerTint: '#e0aaff',
-    textPrimary: '#3a0ca3',
-    textSecondary: '#5c068c',
-    swatches: ['#e0aaff', '#7209b7', '#3a0ca3', '#21045a'],
+    unselectedPill: '#f3e8ff',
+    paperBg: '#ffffff',
+    headerTint: '#f3e8ff',
+    textPrimary: '#3b0764',
+    textSecondary: '#7209b7',
+    swatches: ['#f3e8ff', '#f3e8ff', '#7209b7', '#faf5ff'],
+  },
+  forest: {
+    key: 'forest',
+    name: 'Forest Emerald',
+    category: 'custom',
+    primaryMain: '#16a34a',
+    primaryDark: '#15803d',
+    outerBg: '#f0fdf4',
+    sidebarBg: '#ffffff',
+    activePill: '#16a34a',
+    unselectedPill: '#dcfce7',
+    paperBg: '#ffffff',
+    headerTint: '#dcfce7',
+    textPrimary: '#14532d',
+    textSecondary: '#16a34a',
+    swatches: ['#dcfce7', '#dcfce7', '#16a34a', '#f0fdf4'],
+  },
+  glacier: {
+    key: 'glacier',
+    name: 'Glacier Cyan',
+    category: 'custom',
+    primaryMain: '#0891b2',
+    primaryDark: '#0e7490',
+    outerBg: '#ecfeff',
+    sidebarBg: '#ffffff',
+    activePill: '#0891b2',
+    unselectedPill: '#cffafe',
+    paperBg: '#ffffff',
+    headerTint: '#cffafe',
+    textPrimary: '#155e75',
+    textSecondary: '#0891b2',
+    swatches: ['#cffafe', '#cffafe', '#0891b2', '#ecfeff'],
+  },
+  'obsidian-mint': {
+    key: 'obsidian-mint',
+    name: 'Fresh Mint',
+    category: 'custom',
+    primaryMain: '#10b981',
+    primaryDark: '#059669',
+    outerBg: '#f0fdfa',
+    sidebarBg: '#ffffff',
+    activePill: '#10b981',
+    unselectedPill: '#d1fae5',
+    paperBg: '#ffffff',
+    headerTint: '#d1fae5',
+    textPrimary: '#0f172a',
+    textSecondary: '#10b981',
+    swatches: ['#d1fae5', '#d1fae5', '#10b981', '#f0fdfa'],
   },
 };
 
+/**
+ * Modern Color Swatches inspired by Color Hunt's popular color trends
+ */
 export const COLOR_SWATCH_PRESETS = [
-  { name: 'Royal Blue', color: '#1d4ed8' },
-  { name: 'Emerald', color: '#059669' },
-  { name: 'Peach', color: '#f97316' },
-  { name: 'Crimson', color: '#e11d48' },
-  { name: 'Pink', color: '#ec4899' },
-  { name: 'Lavender', color: '#8b5cf6' },
-  { name: 'Slate', color: '#475569' },
-  { name: 'Lime', color: '#65a30d' },
-  { name: 'Warm Beige', color: '#d97706' },
-  { name: 'Cyan', color: '#06b6d4' },
-  { name: 'Purple', color: '#a855f7' },
-  { name: 'Forest', color: '#15803d' },
-  { name: 'Gold', color: '#eab308' },
+  { name: 'Velora Violet', color: '#6366f1' },
+  { name: 'Cyber Blue', color: '#2563eb' },
+  { name: 'Glacier Cyan', color: '#06b6d4' },
+  { name: 'Mint Emerald', color: '#10b981' },
+  { name: 'Nordic Teal', color: '#0d9488' },
+  { name: 'Botanical Green', color: '#16a34a' },
+  { name: 'Sunset Amber', color: '#f59e0b' },
+  { name: 'Tuscan Orange', color: '#ea580c' },
+  { name: 'Sunset Coral', color: '#f43f5e' },
+  { name: 'Crimson Rose', color: '#e11d48' },
+  { name: 'Electric Pink', color: '#ec4899' },
+  { name: 'Royal Amethyst', color: '#8b5cf6' },
+  { name: 'Midnight Navy', color: '#1e3a8a' },
+  { name: 'Modern Slate', color: '#475569' },
 ];
 
+/**
+ * Helper to adjust hex color lightness & tone dynamically
+ */
+function hexToHsl(hex: string): { h: number; s: number; l: number } {
+  let clean = hex.replace('#', '');
+  if (clean.length === 3) {
+    clean = clean.split('').map((c) => c + c).join('');
+  }
+  const r = parseInt(clean.substring(0, 2), 16) / 255;
+  const g = parseInt(clean.substring(2, 4), 16) / 255;
+  const b = parseInt(clean.substring(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h = Math.round(h * 60);
+  }
+
+  return { h, s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  s = Math.max(0, Math.min(100, s)) / 100;
+  l = Math.max(0, Math.min(100, l)) / 100;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
+  }
+
+  const toHex = (n: number) => {
+    const val = Math.round((n + m) * 255);
+    return Math.max(0, Math.min(255, val)).toString(16).padStart(2, '0');
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+/**
+ * Procedurally generates a harmonious 4-color modern Color Hunt style palette from any color.
+ */
 export function generateCustomThemeFromColor(hexColor: string, name: string): ThemePalette {
   const key = name.toLowerCase().replace(/\s+/g, '-');
+  const hsl = hexToHsl(hexColor);
+
+  // Generate harmonized light tones based on the selected hue
+  const primaryMain = hexColor;
+  const primaryDark = hslToHex(hsl.h, Math.min(100, hsl.s + 10), Math.max(25, hsl.l - 12));
+  const activePill = hexColor;
+  const outerBg = hslToHex(hsl.h, 30, 96);
+  const sidebarBg = '#ffffff';
+  const unselectedPill = hslToHex(hsl.h, 35, 93);
+  const paperBg = '#ffffff';
+  const headerTint = hslToHex(hsl.h, 60, 92);
+  const textPrimary = '#0f172a';
+  const textSecondary = primaryDark;
+
   return {
     key,
     name,
     category: 'custom',
-    primaryMain: hexColor,
-    primaryDark: hexColor,
-    outerBg: '#0e1320',
-    sidebarBg: '#151c2e',
-    activePill: hexColor,
-    unselectedPill: '#243048',
-    paperBg: '#f8fafc',
-    headerTint: '#e2e8f0',
-    textPrimary: '#0f172a',
-    textSecondary: '#475569',
-    swatches: ['#cbd5e1', hexColor, '#151c2e', '#0e1320'],
+    primaryMain,
+    primaryDark,
+    outerBg,
+    sidebarBg,
+    activePill,
+    unselectedPill,
+    paperBg,
+    headerTint,
+    textPrimary,
+    textSecondary,
+    swatches: [headerTint, unselectedPill, primaryMain, outerBg],
   };
 }

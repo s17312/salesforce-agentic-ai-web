@@ -34,7 +34,7 @@ export const DistributorMapperTableHeadings = [
     field: "hasProducts",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <ProductIcon />
           Product
         </Box>
@@ -71,7 +71,7 @@ export const DistributorMapperTableHeadings = [
     field: "hasOutlets",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <OutletIcon />
           Outlet
         </Box>
@@ -108,7 +108,7 @@ export const DistributorMapperTableHeadings = [
     field: "hasRoutes",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <RouteIcon />
           Route
         </Box>
@@ -145,7 +145,7 @@ export const DistributorMapperTableHeadings = [
     field: "hasRepresentatives",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <SalesRepIcon />
           Sales Rep
         </Box>
@@ -182,7 +182,7 @@ export const DistributorMapperTableHeadings = [
     field: "hasCompanies",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <CompanyIcon />
           Company
         </Box>

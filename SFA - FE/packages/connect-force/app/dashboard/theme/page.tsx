@@ -54,18 +54,18 @@ export default function ThemeManagementPage() {
         <Box
           onClick={() => selectTheme(t.key)}
           sx={{
-            border: isSelected ? '2.5px solid #0a0d2c' : '1px solid #cbd5e1',
+            border: isSelected ? `2.5px solid ${t.primaryMain}` : '1px solid #cbd5e1',
             borderRadius: '14px',
             p: 1.5,
-            bgcolor: isSelected ? '#ffffff' : '#ffffff',
+            bgcolor: '#ffffff',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: isSelected ? '0 8px 24px rgba(10,13,44,0.15)' : '0 2px 8px rgba(0,0,0,0.04)',
+            boxShadow: isSelected ? `0 8px 24px ${t.primaryMain}33` : '0 2px 8px rgba(0,0,0,0.04)',
             position: 'relative',
             '&:hover': {
-              borderColor: '#0a0d2c',
+              borderColor: t.primaryMain,
               transform: 'translateY(-3px)',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+              boxShadow: `0 8px 20px ${t.primaryMain}26`,
             },
           }}
         >
@@ -143,7 +143,7 @@ export default function ThemeManagementPage() {
       <BreadcrumbNavigation
         pageTitle="Theme & Appearance"
         pageNavigation={[{ pageName: 'Settings' }, { pageName: 'Theme' }]}
-        icon={<PaletteIcon sx={{ color: '#0a0d2c' }} />}
+        icon={<PaletteIcon sx={{ color: currentTheme.primaryMain }} />}
       />
 
       {/* Main Container Card matching Image 2 */}
@@ -257,7 +257,7 @@ export default function ThemeManagementPage() {
           <Button
             variant="contained"
             onClick={handleConfirmCreateTheme}
-            sx={{ bgcolor: '#0a0d2c', color: '#ffffff' }}
+            sx={{ bgcolor: currentTheme.primaryMain, color: '#ffffff', '&:hover': { bgcolor: currentTheme.primaryDark } }}
           >
             Create & Apply
           </Button>

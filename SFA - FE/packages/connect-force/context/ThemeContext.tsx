@@ -35,7 +35,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const CustomThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentThemeKey, setCurrentThemeKey] = useState<string>('blue');
+  const [currentThemeKey, setCurrentThemeKey] = useState<string>('velora-purple');
   const [customThemesMap, setCustomThemesMap] = useState<Record<string, ThemePalette>>(DEFAULT_CUSTOM_THEMES);
   const [dbRecordsMap, setDbRecordsMap] = useState<Record<string, DBThemeRecord>>({});
   const [isAppearanceOpen, setIsAppearanceOpen] = useState(false);
@@ -66,7 +66,12 @@ export const CustomThemeProvider = ({ children }: { children: React.ReactNode })
   }, [customThemesMap]);
 
   const currentTheme = useMemo(() => {
-    return allThemes[currentThemeKey] || SYSTEM_THEMES.blue;
+    return (
+      allThemes[currentThemeKey] ||
+      allThemes['velora-purple'] ||
+      SYSTEM_THEMES['velora-purple'] ||
+      SYSTEM_THEMES.blue
+    );
   }, [allThemes, currentThemeKey]);
 
   // Apply CSS root variables whenever currentTheme changes

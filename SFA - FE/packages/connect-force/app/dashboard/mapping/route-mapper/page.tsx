@@ -24,6 +24,7 @@ import QuickSearchToolbar from "@/components/data-grid/search-filter";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { useColumnFilter } from "@/components/hook-form/ColumnFilter";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 const RouteMapper = () => {
   const router = useRouter();
@@ -77,6 +78,7 @@ const RouteMapper = () => {
       <BreadcrumbNavigation
         pageTitle="Route Mapping"
         pageNavigation={[{ pageName: "Route Mapping" }, { pageName: "List" }]}
+        icon={<GoogleIcon name="alt_route" size={24} />}
         onLinkClick={handleBreadcrumbNavigation}
         onFullScreenClick={handleFullScreenClick}
       />

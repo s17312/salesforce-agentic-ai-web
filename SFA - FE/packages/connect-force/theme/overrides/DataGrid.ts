@@ -14,35 +14,35 @@ export default function DataGrid(theme: Theme) {
             fontWeight: 600,
           },
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#dedbf5 !important",
+            backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
             borderRadius: "10px 10px 0 0",
             borderBottom: "none",
             minHeight: "48px !important",
             maxHeight: "48px !important",
           },
           "& .MuiDataGrid-columnHeader": {
-            backgroundColor: "#dedbf5 !important",
-            color: "#0a0d2c",
+            backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
+            color: "var(--text-primary, #0f172a) !important",
             fontWeight: 800,
             fontSize: "0.9rem",
             "&:focus, &:focus-within": { outline: "none" },
             "&:not(:last-child)": {
-              borderRight: "1.5px solid rgba(10, 13, 44, 0.15)",
+              borderRight: "1.5px solid rgba(0, 0, 0, 0.08)",
             },
           },
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 800,
-            color: "#0a0d2c",
+            color: "var(--text-primary, #0f172a) !important",
           },
           "& .MuiDataGrid-cell": {
-            borderBottom: "1px solid #e6e4f7",
-            color: "#0a0d2c",
+            borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
+            color: "var(--text-primary, #0f172a)",
             fontSize: "0.875rem",
             "&:focus, &:focus-within": { outline: "none" },
           },
           "& .MuiDataGrid-row": {
             "&:hover": {
-              backgroundColor: "rgba(222, 219, 245, 0.25)",
+              backgroundColor: "rgba(0, 0, 0, 0.03)",
             },
           },
           "& .MuiDataGrid-footerContainer": {

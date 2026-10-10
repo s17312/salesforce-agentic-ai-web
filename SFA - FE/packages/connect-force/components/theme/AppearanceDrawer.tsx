@@ -50,16 +50,17 @@ export default function AppearanceDrawer() {
         },
       }}
     >
-      {/* Header Bar matching Image 1 */}
+      {/* Header Bar matching Theme */}
       <Box
         sx={{
-          bgcolor: '#080a25',
+          bgcolor: currentTheme.primaryMain || '#6366f1',
           color: '#ffffff',
           px: 2.5,
           py: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          transition: 'background-color 0.3s ease',
         }}
       >
         <Stack direction="row" spacing={1.2} alignItems="center">
@@ -75,7 +76,7 @@ export default function AppearanceDrawer() {
 
       {/* Subtitle & Currently Selected Badge */}
       <Box sx={{ p: 2.5, pb: 1.5 }}>
-        <Typography variant="subtitle1" fontWeight={800} sx={{ color: '#0a0d2c', lineHeight: 1.2 }}>
+        <Typography variant="subtitle1" fontWeight={800} sx={{ color: currentTheme.textPrimary || '#1e1b4b', lineHeight: 1.2 }}>
           Select Your Theme
         </Typography>
         <Typography variant="caption" sx={{ color: '#686d94', display: 'block', mb: 1.5 }}>
@@ -130,7 +131,7 @@ export default function AppearanceDrawer() {
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    borderColor: '#0a0d2c',
+                    borderColor: currentTheme.primaryMain,
                     bgcolor: '#f1f5f9',
                     transform: 'translateY(-2px)',
                   },
@@ -168,15 +169,15 @@ export default function AppearanceDrawer() {
                 <Box
                   onClick={() => selectTheme(t.key)}
                   sx={{
-                    border: isSelected ? '2.5px solid #0a0d2c' : '1px solid #e2e8f0',
+                    border: isSelected ? `2.5px solid ${t.primaryMain}` : '1px solid #e2e8f0',
                     borderRadius: '12px',
                     p: 1,
-                    bgcolor: isSelected ? 'rgba(10,13,44,0.02)' : '#ffffff',
+                    bgcolor: isSelected ? `${t.primaryMain}0d` : '#ffffff',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: isSelected ? '0 4px 14px rgba(10,13,44,0.12)' : 'none',
+                    boxShadow: isSelected ? `0 4px 14px ${t.primaryMain}26` : 'none',
                     '&:hover': {
-                      borderColor: '#0a0d2c',
+                      borderColor: t.primaryMain,
                       transform: 'translateY(-2px)',
                     },
                   }}

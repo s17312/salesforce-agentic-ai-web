@@ -19,42 +19,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-// Custom No Rows Overlay matching the uploaded screenshot
-function CustomNoRowsOverlay() {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        py: 6,
-      }}
-    >
-      <svg width="100" height="90" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Box outline */}
-        <rect x="25" y="45" width="50" height="32" rx="4" fill="#DDE1F0" stroke="#B8C0DF" strokeWidth="2" />
-        <path d="M25 55L40 55C43 55 45 57 45 60C45 63 47 65 50 65C53 65 55 63 55 60C55 57 57 55 60 55L75 55" stroke="#B8C0DF" strokeWidth="2" />
-        {/* Document pages inside */}
-        <rect x="35" y="22" width="30" height="32" rx="2" fill="#FFFFFF" stroke="#CCD2EA" strokeWidth="2" />
-        <line x1="41" y1="28" x2="59" y2="28" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        <line x1="41" y1="34" x2="59" y2="34" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        <line x1="41" y1="40" x2="51" y2="40" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        {/* Speech bubble with dots */}
-        <circle cx="68" cy="22" r="11" fill="#E4E8F5" />
-        <path d="M63 29L61 34L67 31" fill="#E4E8F5" />
-        <circle cx="63" cy="22" r="1.5" fill="#A4AECE" />
-        <circle cx="68" cy="22" r="1.5" fill="#A4AECE" />
-        <circle cx="73" cy="22" r="1.5" fill="#A4AECE" />
-      </svg>
-      <Typography sx={{ mt: 1.5, color: '#4a5173', fontWeight: 600, fontSize: '0.9rem' }}>
-        No Rows
-      </Typography>
-    </Box>
-  );
-}
+import { alpha } from '@mui/material/styles';
+import { useThemeContext } from '@/context/ThemeContext';
+import { CustomNoRowsOverlay } from '@/components/data-grid/noRowOverlay';
 
 export interface IDataTableProps {
   title?: string;
@@ -109,6 +76,7 @@ export function DataTable({
   tableBtnIcon,
   ...gridProps
 }: IDataTableProps & Partial<DataGridProps>) {
+  const { currentTheme } = useThemeContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedColumn, setSelectedColumn] = useState('All');
 
@@ -185,7 +153,7 @@ export function DataTable({
         <Stack direction="row" spacing={2} alignItems="flex-end" sx={{ flexGrow: 1, maxWidth: 600 }}>
           {/* Column Selector */}
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="caption" sx={{ color: '#686d94', fontWeight: 600, mb: 0.3, ml: 0.5, fontSize: '0.75rem' }}>
+            <Typography variant="caption" sx={{ color: currentTheme?.textSecondary || '#686d94', fontWeight: 600, mb: 0.3, ml: 0.5, fontSize: '0.75rem' }}>
               Column
             </Typography>
             <FormControl size="small">
@@ -194,15 +162,17 @@ export function DataTable({
                 onChange={(e) => setSelectedColumn(e.target.value)}
                 IconComponent={KeyboardArrowDownIcon}
                 sx={{
-                  bgcolor: '#e6e4f5',
+                  bgcolor: currentTheme?.headerTint || '#ede9fe',
                   borderRadius: '10px',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   fontSize: '0.875rem',
-                  color: '#0a0d2c',
+                  color: currentTheme?.textPrimary || '#0f172a',
                   minWidth: 100,
                   height: '40px',
+                  border: `1.5px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.2)}`,
                   '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                   '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                  '& .MuiSelect-icon': { color: currentTheme?.primaryMain || '#6366f1' },
                 }}
               >
                 <MenuItem value="All">All</MenuItem>
@@ -225,7 +195,7 @@ export function DataTable({
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <SearchIcon fontSize="small" sx={{ color: '#686d94' }} />
+                    <SearchIcon fontSize="small" sx={{ color: currentTheme?.primaryMain || '#6366f1' }} />
                   </InputAdornment>
                 ),
               }}
@@ -233,14 +203,21 @@ export function DataTable({
                 flexGrow: 1,
                 maxWidth: 340,
                 '& .MuiOutlinedInput-root': {
-                  bgcolor: '#f0effb',
+                  bgcolor: '#ffffff',
                   borderRadius: '10px',
                   height: '40px',
                   fontSize: '0.875rem',
-                  color: '#0a0d2c',
+                  color: currentTheme?.textPrimary || '#0f172a',
+                  border: `1.5px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.2)}`,
+                  transition: 'all 0.2s ease',
                   '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': { border: '1px solid #0a0d2c' },
+                  '&:hover': {
+                    border: `1.5px solid ${currentTheme?.primaryMain || '#6366f1'}`,
+                  },
+                  '&.Mui-focused': {
+                    border: `1.5px solid ${currentTheme?.primaryMain || '#6366f1'}`,
+                    boxShadow: `0 0 0 3px ${alpha(currentTheme?.primaryMain || '#6366f1', 0.15)}`,
+                  },
                 },
               }}
             />
@@ -257,7 +234,7 @@ export function DataTable({
               onClick={handleAdd || handleTableBtnClick}
               disabled={isTableBtnDisabled}
               sx={{
-                bgcolor: '#0a0d2c',
+                bgcolor: currentTheme?.primaryMain || '#6366f1',
                 color: '#ffffff',
                 borderRadius: '8px',
                 px: 2.5,
@@ -269,10 +246,10 @@ export function DataTable({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.6,
-                boxShadow: '0 4px 12px rgba(10,13,44,0.2)',
+                boxShadow: `0 4px 12px ${alpha(currentTheme?.primaryMain || '#6366f1', 0.25)}`,
                 '&:hover': {
-                  bgcolor: '#181d4f',
-                  boxShadow: '0 6px 16px rgba(10,13,44,0.3)',
+                  bgcolor: currentTheme?.primaryDark || '#4f46e5',
+                  boxShadow: `0 6px 16px ${alpha(currentTheme?.primaryMain || '#6366f1', 0.35)}`,
                 },
               }}
             >
@@ -284,8 +261,9 @@ export function DataTable({
       </Box>
 
       {/* DataGrid Container with Purple Header & Grid */}
-      <Box sx={{ width: '100%', minHeight: 380, flexGrow: 1 }}>
+      <Box sx={{ width: '100%', minHeight: 400, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <DataGrid
+          autoHeight={filteredData.length === 0}
           rows={filteredData}
           columns={finalColumns}
           getRowId={getRowId || ((row) => row.uId || row.id || row.code || Math.random().toString())}
@@ -297,42 +275,69 @@ export function DataTable({
             pagination: { paginationModel: { pageSize: rowsPerPageOptions[0] || 100, page: 0 } },
           }}
           slots={{
-            noRowsOverlay: CustomNoRowsOverlay,
+            noRowsOverlay: () => (
+              <CustomNoRowsOverlay
+                onAdd={handleAdd || handleTableBtnClick}
+                buttonText={tableBtnText || 'Add Entry'}
+              />
+            ),
+            noResultsOverlay: () => (
+              <CustomNoRowsOverlay
+                onAdd={handleAdd || handleTableBtnClick}
+                buttonText={tableBtnText || 'Add Entry'}
+              />
+            ),
           }}
           sx={{
             border: 'none',
             bgcolor: 'transparent',
+            width: '100%',
+            flexGrow: 1,
             '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#dedbf5 !important',
+              backgroundColor: `${currentTheme?.headerTint || '#ede9fe'} !important`,
               borderRadius: '12px 12px 0 0',
               borderBottom: 'none',
               minHeight: '48px !important',
               maxHeight: '48px !important',
             },
             '& .MuiDataGrid-columnHeader': {
-              backgroundColor: '#dedbf5 !important',
-              color: '#0a0d2c',
+              backgroundColor: `${currentTheme?.headerTint || '#ede9fe'} !important`,
+              color: currentTheme?.textPrimary || '#0f172a',
               fontWeight: 800,
               fontSize: '0.9rem',
               '&:focus, &:focus-within': { outline: 'none' },
               '&:not(:last-child)': {
-                borderRight: '1.5px solid rgba(10,13,44,0.15)',
+                borderRight: `1.5px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.12)}`,
               },
             },
             '& .MuiDataGrid-columnHeaderTitle': {
               fontWeight: 800,
-              color: '#0a0d2c',
+              color: currentTheme?.textPrimary || '#0f172a',
             },
             '& .MuiDataGrid-cell': {
-              borderBottom: '1px solid #e6e4f7',
-              color: '#0a0d2c',
+              borderBottom: `1px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.08)}`,
+              color: currentTheme?.textPrimary || '#0f172a',
               fontSize: '0.875rem',
               '&:focus, &:focus-within': { outline: 'none' },
             },
             '& .MuiDataGrid-row': {
               '&:hover': {
-                backgroundColor: 'rgba(222, 219, 245, 0.25)',
+                backgroundColor: `${alpha(currentTheme?.headerTint || '#ede9fe', 0.45)}`,
               },
+            },
+            '& .MuiDataGrid-virtualScroller': {
+              minHeight: filteredData.length === 0 ? '340px !important' : 'auto',
+              overflowX: filteredData.length === 0 ? 'hidden !important' : 'auto',
+            },
+            '& .MuiDataGrid-virtualScrollerContent': {
+              minHeight: filteredData.length === 0 ? '340px !important' : 'auto',
+            },
+            '& .MuiDataGrid-overlay': {
+              minHeight: '340px !important',
+              display: 'flex !important',
+              alignItems: 'center !important',
+              justifyContent: 'center !important',
+              backgroundColor: 'transparent !important',
             },
             '& .MuiDataGrid-footerContainer': {
               borderTop: 'none',
@@ -346,6 +351,7 @@ export function DataTable({
             '& .MuiTablePagination-select': {
               fontWeight: 600,
             },
+            ...(Array.isArray(sx) ? Object.assign({}, ...sx) : sx),
           }}
           {...gridProps}
         />

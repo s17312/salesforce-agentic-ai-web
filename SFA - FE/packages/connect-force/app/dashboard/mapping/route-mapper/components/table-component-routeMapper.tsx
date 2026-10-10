@@ -31,7 +31,7 @@ export const RouteMapperTableHeadings = [
     field: "hasOutlets",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <OutletIcon />
           Outlet
         </Box>
@@ -68,7 +68,7 @@ export const RouteMapperTableHeadings = [
     field: "hasReps",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <SalesRepIcon />
           Sales Rep
         </Box>

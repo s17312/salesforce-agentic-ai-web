@@ -20,6 +20,46 @@ const dataGridStyle = {
   width: "100%",
   flex: 1,
   minHeight: "450px",
+  "& .MuiDataGrid-columnHeaders": {
+    backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
+    borderRadius: "10px 10px 0 0",
+    borderBottom: "none",
+    minHeight: "48px !important",
+    maxHeight: "48px !important",
+  },
+  "& .MuiDataGrid-columnHeader": {
+    backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
+    color: "var(--text-primary, #0f172a) !important",
+    fontWeight: 800,
+    fontSize: "0.9rem",
+    "&:focus, &:focus-within": { outline: "none" },
+    "&:not(:last-child)": {
+      borderRight: "1.5px solid rgba(0, 0, 0, 0.08)",
+    },
+  },
+  "& .MuiDataGrid-columnHeaderTitle": {
+    fontWeight: 800,
+    color: "var(--text-primary, #0f172a) !important",
+  },
+  "& .MuiDataGrid-cell": {
+    borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
+    color: "var(--text-primary, #0f172a)",
+    fontSize: "0.875rem",
+    "&:focus, &:focus-within": { outline: "none" },
+  },
+  "& .MuiDataGrid-overlay": {
+    minHeight: "320px !important",
+    display: "flex !important",
+    alignItems: "center !important",
+    justifyContent: "center !important",
+    backgroundColor: "transparent !important",
+  },
+  "& .MuiDataGrid-virtualScroller": {
+    minHeight: "320px",
+  },
+  "& .MuiDataGrid-virtualScrollerContent": {
+    minHeight: "320px",
+  },
 };
 
 const focusDataGridStyle = {

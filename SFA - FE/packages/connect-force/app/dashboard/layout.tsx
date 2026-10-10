@@ -13,6 +13,7 @@ import SnackbarProvider from "@/components/snackbar/SnackbarProvider";
 import MainLayout from "@/layout/MainLayout";
 import AuthProvider from "../context/AuthProvider";
 import { CustomThemeProvider } from "@/context/ThemeContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 export default function RootLayout({ children }: PropsWithChildren) {
   let pathname = usePathname();
@@ -51,9 +52,11 @@ export default function RootLayout({ children }: PropsWithChildren) {
               <Provider store={store}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <SnackbarProvider>
-                    <MainLayout>
-                      {children}
-                    </MainLayout>
+                    <NotificationProvider>
+                      <MainLayout>
+                        {children}
+                      </MainLayout>
+                    </NotificationProvider>
                   </SnackbarProvider>
                 </LocalizationProvider>
               </Provider>

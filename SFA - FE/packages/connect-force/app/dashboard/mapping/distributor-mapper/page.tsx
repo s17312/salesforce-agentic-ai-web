@@ -24,6 +24,7 @@ import QuickSearchToolbar from "@/components/data-grid/search-filter";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { useColumnFilter } from "@/components/hook-form/ColumnFilter";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 const DistributorMapper = () => {
   const router = useRouter();
@@ -81,6 +82,7 @@ const DistributorMapper = () => {
           { pageName: "Distributor Mapping" },
           { pageName: "List" },
         ]}
+        icon={<GoogleIcon name="local_shipping" size={24} />}
         onLinkClick={handleBreadcrumbNavigation}
         onFullScreenClick={handleFullScreenClick}
       />

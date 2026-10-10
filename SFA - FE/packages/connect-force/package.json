@@ -20,6 +20,7 @@
     "@icp/react-fusion": "file:vendor\\icp-react-fusion-1.0.11.tgz",
     "@json2csv/plainjs": "^7.0.6",
     "@mantine/hooks": "^7.13.0",
+    "@microsoft/signalr": "^10.0.11",
     "@mui/icons-material": "^5.16.7",
     "@mui/lab": "5.0.0-alpha.165",
     "@mui/material": "^5.16.7",

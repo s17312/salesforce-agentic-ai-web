@@ -1,15 +1,13 @@
-import React from "react";
+import React, { memo } from "react";
 import { Box } from "@mui/material";
-import { memo } from "react";
-import Image from "next/image";
-import OutletImg from "@/assets/images/outlet.png";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 function outlet() {
-    return (
-        <Box style={{ marginRight: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Image src={OutletImg} alt="Outlet" width={18} height={18} />
-        </Box>
-    )
+  return (
+    <Box sx={{ mr: 0.8, display: "inline-flex", alignItems: "center", verticalAlign: "middle" }}>
+      <GoogleIcon name="storefront" size={18} />
+    </Box>
+  );
 }
 
 export const OutletIcon = memo(outlet);

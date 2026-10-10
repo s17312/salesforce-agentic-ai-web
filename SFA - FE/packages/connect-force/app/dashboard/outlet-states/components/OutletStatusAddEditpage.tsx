@@ -20,6 +20,8 @@ import {
 } from "@/service/outletStatus.service";
 import { cursorDefault } from "@/styles/pageLayoutStyles/pageLayoutStyles";
 import { LoadingButton } from "@mui/lab";
+import { alpha } from "@mui/material/styles";
+import { useThemeContext } from "@/context/ThemeContext";
 import { SaveIcon } from "@/components/icons/saveIcon";
 import { dispatch, useSelector } from "@/redux/store";
 import {
@@ -46,6 +48,7 @@ export default function OutletStatusAddEditpage({
 }: Props) {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const { currentTheme } = useThemeContext();
 
   const defaultValues = useMemo(
     () => ({
@@ -156,14 +159,16 @@ export default function OutletStatusAddEditpage({
         <Box
           sx={{
             width: "100%",
-            bgcolor: "#E5E0F5",
+            bgcolor: currentTheme?.headerTint || "#ede9fe",
             height: "10vh",
+            minHeight: "72px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             border: "2px solid #FFFFFF",
             borderRadius: "15px",
             mt: "15px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.04)",
           }}
         >
           <Box
@@ -184,12 +189,12 @@ export default function OutletStatusAddEditpage({
                 color: "#FFFFFF",
                 height: "44px",
                 px: 4,
-                borderRadius: "15px",
+                borderRadius: "12px",
                 mr: 3,
-                border: "2px solid #9fa4d4",
-                background: "#070E4D",
+                background: currentTheme?.primaryMain || "#6366f1",
+                boxShadow: `0 4px 14px ${alpha(currentTheme?.primaryMain || "#6366f1", 0.35)}`,
                 "&:hover": {
-                  background: "#2D3675",
+                  background: currentTheme?.primaryDark || "#4f46e5",
                 },
               }}
             >
@@ -203,12 +208,14 @@ export default function OutletStatusAddEditpage({
                 sx={{
                   height: "44px",
                   px: 4,
-                  borderRadius: "15px",
-                  background: "#f7f4fe",
-                  border: "2px solid #fbf9ff",
+                  borderRadius: "12px",
+                  background: "#ffffff",
+                  color: currentTheme?.primaryMain || "#6366f1",
+                  border: `1.5px solid ${alpha(currentTheme?.primaryMain || "#6366f1", 0.3)}`,
+                  fontWeight: 600,
                   "&:hover": {
-                    background: "#DED8F2",
-                    border: "2px solid #f4f1fc",
+                    background: currentTheme?.headerTint || "#ede9fe",
+                    border: `1.5px solid ${currentTheme?.primaryMain || "#6366f1"}`,
                   },
                 }}
               >
@@ -221,12 +228,14 @@ export default function OutletStatusAddEditpage({
                 sx={{
                   height: "44px",
                   px: 4,
-                  borderRadius: "15px",
-                  background: "#f7f4fe",
-                  border: "2px solid #fbf9ff",
+                  borderRadius: "12px",
+                  background: "#ffffff",
+                  color: currentTheme?.primaryMain || "#6366f1",
+                  border: `1.5px solid ${alpha(currentTheme?.primaryMain || "#6366f1", 0.3)}`,
+                  fontWeight: 600,
                   "&:hover": {
-                    background: "#DED8F2",
-                    border: "2px solid #f4f1fc",
+                    background: currentTheme?.headerTint || "#ede9fe",
+                    border: `1.5px solid ${currentTheme?.primaryMain || "#6366f1"}`,
                   },
                 }}
               >

@@ -1,15 +1,13 @@
-import React from "react";
+import React, { memo } from "react";
 import { Box } from "@mui/material";
-import { memo } from "react";
-import Image from "next/image";
-import CompanyImg from "@/assets/images/company.png";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 function company() {
-    return (
-        <Box style={{ marginRight: '10px', paddingTop: '4px' }}>
-            <Image src={CompanyImg} alt="Outlet" width={20} height={20} />
-        </Box>
-    )
+  return (
+    <Box sx={{ mr: 0.8, display: "inline-flex", alignItems: "center", verticalAlign: "middle" }}>
+      <GoogleIcon name="business" size={18} />
+    </Box>
+  );
 }
 
 export const CompanyIcon = memo(company);

@@ -3,6 +3,7 @@ import { Box, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import SideBar from './SideBar';
 import AppBar from './AppBar';
 import AppearanceDrawer from '@/components/theme/AppearanceDrawer';
+import NotificationDrawer from '@/components/notification/NotificationDrawer';
 import { useThemeContext } from '@/context/ThemeContext';
 
 export interface IslandLayoutProps {
@@ -19,10 +20,18 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { currentTheme } = useThemeContext();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+  const handleDrawerToggle = (e?: any) => {
+    if (crystalAppbarProps?.onToggleDrawerClick) {
+      crystalAppbarProps.onToggleDrawerClick(e);
+    }
+    if (isMobile) {
+      setMobileOpen((prev) => !prev);
+    } else {
+      setIsSidebarCollapsed((prev) => !prev);
+    }
   };
 
   return (
@@ -72,20 +81,51 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
               },
             }}
           >
-            {sideBarProps && <SideBar {...sideBarProps} navItems={sideBarProps.items || sideBarProps.navItems} />}
+            {sideBarProps && (
+              <SideBar
+                {...sideBarProps}
+                navItems={sideBarProps.items || sideBarProps.navItems}
+                isCollapsed={false}
+              />
+            )}
           </Drawer>
         ) : (
-          /* Desktop Fixed Sidebar */
+          /* Desktop Fixed/Collapsible Sidebar */
           sideBarProps && (
             <Box
               sx={{
                 display: { xs: 'none', md: 'block' },
-                width: 260,
+                width: isSidebarCollapsed ? 84 : 260,
                 height: '100%',
                 flexShrink: 0,
+                py: { xs: 1, sm: 1.25 },
+                pl: { xs: 1, sm: 1.25 },
+                pr: { xs: 0.5, sm: 0.625 },
+                boxSizing: 'border-box',
+                transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                overflow: 'hidden',
               }}
             >
-              <SideBar {...sideBarProps} navItems={sideBarProps.items || sideBarProps.navItems} />
+              <Box
+                sx={{
+                  height: '100%',
+                  width: '100%',
+                  bgcolor: currentTheme?.sidebarBg || '#ffffff',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
+                  border: '1px solid rgba(0, 0, 0, 0.05)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'background-color 0.3s ease',
+                }}
+              >
+                <SideBar
+                  {...sideBarProps}
+                  navItems={sideBarProps.items || sideBarProps.navItems}
+                  isCollapsed={isSidebarCollapsed}
+                />
+              </Box>
             </Box>
           )
         )}
@@ -96,12 +136,18 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
           sx={{
             flexGrow: 1,
             height: '100%',
-            width: { xs: '100%', md: 'calc(100vw - 260px)' },
-            p: { xs: 1.5, sm: 2 },
+            width: {
+              xs: '100%',
+              md: isSidebarCollapsed ? 'calc(100vw - 84px)' : 'calc(100vw - 260px)',
+            },
+            py: { xs: 1, sm: 1.25 },
+            pr: { xs: 1, sm: 1.25 },
+            pl: { xs: 1, sm: 1.25, md: 0.625 },
             boxSizing: 'border-box',
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
+            transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
           {/* Island Card */}
@@ -109,12 +155,13 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
             sx={{
               flexGrow: 1,
               bgcolor: currentTheme?.paperBg || '#f5f4fd',
-              borderRadius: '16px',
-              p: { xs: 2, sm: 3 },
+              borderRadius: '12px',
+              p: { xs: 2, sm: 2.5 },
               display: 'flex',
               flexDirection: 'column',
               overflowY: 'auto',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
+              border: '1px solid rgba(0, 0, 0, 0.05)',
               transition: 'background-color 0.3s ease',
               '&::-webkit-scrollbar': {
                 width: '6px',
@@ -132,6 +179,9 @@ export const IslandLayout = forwardRef<HTMLDivElement, IslandLayoutProps>(functi
 
       {/* Right-Side Appearance Drawer matching Image 1 */}
       <AppearanceDrawer />
+
+      {/* Right-Side Notification Console Drawer */}
+      <NotificationDrawer />
     </Box>
   );
 });

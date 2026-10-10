@@ -24,6 +24,7 @@ import { getCompanyMapping } from "@/service/company.service";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { useColumnFilter } from "@/components/hook-form/ColumnFilter";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 const CompanyMapper = () => {
   const router = useRouter();
@@ -79,6 +80,7 @@ const CompanyMapper = () => {
       <BreadcrumbNavigation
         pageTitle="Company Mapping"
         pageNavigation={[{ pageName: "Company Mapping" }, { pageName: "List" }]}
+        icon={<GoogleIcon name="business" size={24} />}
         onLinkClick={handleBreadcrumbNavigation}
         onFullScreenClick={handleFullScreenClick}
       />

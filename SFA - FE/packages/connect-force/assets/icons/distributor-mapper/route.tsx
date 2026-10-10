@@ -1,15 +1,13 @@
-import React from "react";
+import React, { memo } from "react";
 import { Box } from "@mui/material";
-import { memo } from "react";
-import Image from "next/image";
-import RouteImg from "@/assets/images/route.png";
+import GoogleIcon from "@/components/icons/GoogleIcon";
 
 function Route() {
-    return (
-        <Box style={{ marginRight: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Image src={RouteImg} alt="Route" width={18} height={18} />
-        </Box>
-    )
+  return (
+    <Box sx={{ mr: 0.8, display: "inline-flex", alignItems: "center", verticalAlign: "middle" }}>
+      <GoogleIcon name="alt_route" size={18} />
+    </Box>
+  );
 }
 
 export const RouteIcon = memo(Route);

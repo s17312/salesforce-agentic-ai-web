@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import { Box, Typography, Breadcrumbs, Link, IconButton, Stack } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import { alpha } from '@mui/material/styles';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export interface BreadcrumbPaths {
   pageName?: string;
@@ -24,6 +26,8 @@ export function BreadcrumbNavigation({
   onLinkClick,
   icon,
 }: BreadcrumbProps) {
+  const { currentTheme } = useThemeContext();
+
   return (
     <Box
       sx={{
@@ -35,22 +39,24 @@ export function BreadcrumbNavigation({
         gap: 2,
       }}
     >
-      {/* Left Side: Soft Light Purple Icon + Title & Breadcrumbs */}
+      {/* Left Side: Themed Icon Box + Title & Breadcrumbs */}
       <Stack direction="row" alignItems="center" spacing={2}>
         {icon && (
           <Box
             sx={{
-              bgcolor: '#e4e1f7',
-              color: '#0a0d2c',
+              bgcolor: currentTheme?.headerTint || '#e0f2fe',
+              color: currentTheme?.primaryMain || '#0284c7',
               p: 1.2,
               borderRadius: '14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(10,13,44,0.06)',
+              border: `1px solid ${alpha(currentTheme?.primaryMain || '#0284c7', 0.15)}`,
+              boxShadow: `0 2px 8px ${alpha(currentTheme?.primaryMain || '#0284c7', 0.12)}`,
+              transition: 'all 0.25s ease',
               '& svg': {
                 fontSize: '1.6rem',
-                color: '#0a0d2c',
+                color: currentTheme?.primaryMain || '#0284c7',
               },
             }}
           >
@@ -64,7 +70,7 @@ export function BreadcrumbNavigation({
             component="h1"
             sx={{
               fontWeight: 800,
-              color: '#0a0d2c',
+              color: currentTheme?.textPrimary || '#0f172a',
               fontSize: '1.4rem',
               letterSpacing: '-0.2px',
               lineHeight: 1.2,
@@ -76,7 +82,15 @@ export function BreadcrumbNavigation({
 
           {pageNavigation && pageNavigation.length > 0 && (
             <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="small" sx={{ color: '#5d638a', fontSize: '0.9rem' }} />}
+              separator={
+                <NavigateNextIcon
+                  fontSize="small"
+                  sx={{
+                    color: currentTheme?.textSecondary || alpha(currentTheme?.textPrimary || '#0f172a', 0.4),
+                    fontSize: '0.9rem',
+                  }}
+                />
+              }
               aria-label="breadcrumb"
             >
               {pageNavigation.map((item, index) => {
@@ -85,7 +99,11 @@ export function BreadcrumbNavigation({
                   <Typography
                     key={index}
                     variant="body2"
-                    sx={{ fontWeight: 600, color: '#5d638a', fontSize: '0.85rem' }}
+                    sx={{
+                      fontWeight: 700,
+                      color: currentTheme?.textPrimary || '#0f172a',
+                      fontSize: '0.85rem',
+                    }}
                   >
                     {item.pageName}
                   </Typography>
@@ -103,10 +121,13 @@ export function BreadcrumbNavigation({
                     }}
                     sx={{
                       cursor: 'pointer',
-                      color: '#5d638a',
-                      fontWeight: 500,
+                      color: currentTheme?.primaryMain || '#0284c7',
+                      fontWeight: 600,
                       fontSize: '0.85rem',
-                      '&:hover': { color: '#0a0d2c' },
+                      transition: 'color 0.2s ease',
+                      '&:hover': {
+                        color: currentTheme?.primaryDark || '#0369a1',
+                      },
                     }}
                   >
                     {item.pageName}
@@ -124,13 +145,16 @@ export function BreadcrumbNavigation({
           <IconButton
             onClick={onFullScreenClick}
             sx={{
-              bgcolor: '#e4e1f7',
-              color: '#0a0d2c',
+              bgcolor: currentTheme?.headerTint || '#e0f2fe',
+              color: currentTheme?.primaryMain || '#0284c7',
               p: 1,
               borderRadius: '10px',
-              boxShadow: '0 2px 6px rgba(10,13,44,0.06)',
+              border: `1px solid ${alpha(currentTheme?.primaryMain || '#0284c7', 0.18)}`,
+              boxShadow: `0 2px 6px ${alpha(currentTheme?.primaryMain || '#0284c7', 0.1)}`,
+              transition: 'all 0.2s ease',
               '&:hover': {
-                bgcolor: '#d5d0f2',
+                bgcolor: alpha(currentTheme?.primaryMain || '#0284c7', 0.18),
+                color: currentTheme?.primaryDark || '#0369a1',
               },
             }}
           >

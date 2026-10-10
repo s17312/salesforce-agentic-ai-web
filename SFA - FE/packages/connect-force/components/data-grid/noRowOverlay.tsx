@@ -1,7 +1,30 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
+"use client";
 
-export function CustomNoRowsOverlay() {
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { useTheme, alpha } from "@mui/material/styles";
+import GoogleIcon from "@/components/icons/GoogleIcon";
+
+export interface CustomNoRowsOverlayProps {
+  onAdd?: () => void;
+  buttonText?: string;
+  title?: string;
+  subtitle?: string;
+  showButton?: boolean;
+  googleIconName?: string;
+}
+
+export function CustomNoRowsOverlay({
+  onAdd,
+  buttonText = "Add Entry",
+  title = "No data to display",
+  subtitle = "There are no records in this table yet.\nAdd your first entry to get started.",
+  showButton = true,
+  googleIconName = "table_chart",
+}: CustomNoRowsOverlayProps) {
+  const theme = useTheme();
+  const formattedButtonText = buttonText.startsWith("+") ? buttonText : `+ ${buttonText}`;
+
   return (
     <Box
       sx={{
@@ -10,31 +33,93 @@ export function CustomNoRowsOverlay() {
         alignItems: "center",
         justifyContent: "center",
         height: "100%",
-        py: 6,
+        minHeight: 300,
+        py: 5,
+        px: 2,
+        textAlign: "center",
       }}
     >
-      <svg width="100" height="90" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Box outline */}
-        <rect x="25" y="45" width="50" height="32" rx="4" fill="#DDE1F0" stroke="#B8C0DF" strokeWidth="2" />
-        <path d="M25 55L40 55C43 55 45 57 45 60C45 63 47 65 50 65C53 65 55 63 55 60C55 57 57 55 60 55L75 55" stroke="#B8C0DF" strokeWidth="2" />
-        {/* Document pages inside */}
-        <rect x="35" y="22" width="30" height="32" rx="2" fill="#FFFFFF" stroke="#CCD2EA" strokeWidth="2" />
-        <line x1="41" y1="28" x2="59" y2="28" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        <line x1="41" y1="34" x2="59" y2="34" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        <line x1="41" y1="40" x2="51" y2="40" stroke="#DDE1F0" strokeWidth="2" strokeLinecap="round" />
-        {/* Speech bubble with dots */}
-        <circle cx="68" cy="22" r="11" fill="#E4E8F5" />
-        <path d="M63 29L61 34L67 31" fill="#E4E8F5" />
-        <circle cx="63" cy="22" r="1.5" fill="#A4AECE" />
-        <circle cx="68" cy="22" r="1.5" fill="#A4AECE" />
-        <circle cx="73" cy="22" r="1.5" fill="#A4AECE" />
-      </svg>
-      <Typography sx={{ mt: 1.5, color: "#4a5173", fontWeight: 600, fontSize: "0.9rem" }}>
-        No Rows
+      {/* Box with Google Fonts Icon matching Image 2 */}
+      <Box
+        sx={{
+          width: 52,
+          height: 52,
+          borderRadius: "12px",
+          bgcolor: theme.palette.primary?.lighter || "#f4f5f8",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mb: 2,
+          border: `1px solid ${alpha(theme.palette.primary?.main || "#111827", 0.15)}`,
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+        }}
+      >
+        <GoogleIcon
+          name={googleIconName}
+          size={28}
+          color={theme.palette.primary?.main || "#111827"}
+          weight={500}
+        />
+      </Box>
+
+      {/* Title */}
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 800,
+          color: theme.palette.text?.primary || "#111827",
+          fontSize: "1.125rem",
+          letterSpacing: "-0.2px",
+          mb: 0.8,
+        }}
+      >
+        {title}
       </Typography>
+
+      {/* Subtitle */}
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#6b7280",
+          fontSize: "0.875rem",
+          lineHeight: 1.5,
+          maxWidth: 320,
+          whiteSpace: "pre-line",
+          mb: showButton ? 2.5 : 0,
+        }}
+      >
+        {subtitle}
+      </Typography>
+
+      {/* Call to Action Button matching Image 2 */}
+      {showButton && (
+        <Button
+          variant="contained"
+          onClick={onAdd}
+          sx={{
+            bgcolor: theme.palette.primary?.main || "#0a0d2c",
+            color: "#ffffff",
+            borderRadius: "10px",
+            px: 2.8,
+            py: 0.85,
+            textTransform: "none",
+            fontWeight: 700,
+            fontSize: "0.875rem",
+            boxShadow: `0 4px 12px ${alpha(theme.palette.primary?.main || "#0a0d2c", 0.3)}`,
+            "&:hover": {
+              bgcolor: theme.palette.primary?.dark || "#1a2254",
+              boxShadow: `0 6px 16px ${alpha(theme.palette.primary?.main || "#0a0d2c", 0.4)}`,
+              cursor: onAdd ? "pointer" : "default",
+            },
+          }}
+        >
+          {formattedButtonText}
+        </Button>
+      )}
     </Box>
   );
 }
 
+export const TableEmptyState = CustomNoRowsOverlay;
 export const StyledGridOverlay = CustomNoRowsOverlay;
 export default CustomNoRowsOverlay;

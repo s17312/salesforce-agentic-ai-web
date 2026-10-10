@@ -31,7 +31,7 @@ export const CompanyMapperTableHeadings = [
     field: "hasProducts",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <ProductIcon />
           Product
         </Box>
@@ -67,7 +67,7 @@ export const CompanyMapperTableHeadings = [
     field: "hasDistributor",
     headerName: (
       <React.Fragment>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <DistributorIcon />
           Distributor
         </Box>
