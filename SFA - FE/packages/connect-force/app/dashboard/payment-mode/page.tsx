@@ -22,41 +22,46 @@ import { PATH_DASHBOARD } from "@/routes/paths";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const PaymentModePage = () => {
-  const paymentModeList = useSelector(
-    (state) => state.paymentModeSlice.paymentModes
-  );
-  const page = useSelector((state) => state.paymentModeSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.paymentModeSlice.newRowsPerPage
-  );
-  const isLoading = useSelector((state) => state.paymentModeSlice.isLoading);
+  const popupResponse = useSelector((state) => state.layout.popupResponse);
   const paymentMode = useSelector(
     (state) => state.paymentModeSlice.paymentMode
   );
-  const popupResponse = useSelector((state) => state.layout.popupResponse);
   const [serverDownError, setServerDownError] = useState(false);
 
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const {
+    data: paymentModeList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllPaymentModes(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        setServerDownError(true);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllPaymentModes();
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-        setServerDownError(true);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -103,11 +108,19 @@ const PaymentModePage = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={PaymentModeTableHeadings}
               data={paymentModeList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

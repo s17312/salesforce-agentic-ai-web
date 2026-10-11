@@ -20,30 +20,40 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { DistributorTableHeadings, tableOptions } from "./components/table-component-distributor";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const DistributorPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
   const distributorList = useSelector((state) => state.distributor.distributors);
-  const page = useSelector((state) => state.distributor.newPage);
-  const rowCount = useSelector((state) => state.distributor.newRowsPerPage);
+  const paginationDetails = useSelector((state) => state.distributor.paginationDetails);
+  const totalCount = (paginationDetails as any)?.total || (paginationDetails as any)?.Total || 0;
   const isLoading = useSelector((state) => state.distributor.isLoading);
   const distributor = useSelector((state) => state.distributor.distributor);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
   const [serverDownError, setServerDownError] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    page: serverPage,
+    pageSize: serverPageSize,
+    handleSearchChange,
+    handlePaginationModelChange,
+    handleSortModelChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllDistributors(undefined, undefined, undefined, "uId", "desc");
+        await getAllDistributors(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultPageSize: 10,
+    defaultSortColumn: "uId",
+    defaultSortOrder: "desc",
+  });
 
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -99,6 +109,12 @@ const DistributorPage = () => {
               // @ts-ignore
               columns={DistributorTableHeadings}
               data={distributorList}
+              totalCount={totalCount}
+              page={serverPage}
+              pageSize={serverPageSize}
+              onSearchChange={handleSearchChange}
+              onPaginationModelChange={handlePaginationModelChange}
+              onSortModelChange={handleSortModelChange}
               isLoading={isLoading}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore

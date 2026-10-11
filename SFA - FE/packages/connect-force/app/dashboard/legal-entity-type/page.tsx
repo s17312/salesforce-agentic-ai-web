@@ -20,36 +20,39 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
-const LegalEntityTypePage = () => {
-  const legalEntityTypesList = useSelector(
-    (state) => state.legleEntityTypeSlice.legleEntityTypeStates
-  );
-  const page = useSelector((state) => state.legleEntityTypeSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.legleEntityTypeSlice.newRowsPerPage
-  );
-  const isLoading = useSelector(
-    (state) => state.legleEntityTypeSlice.isLoading
-  );
-  const [isFullScreen, setIsFullScreen] = useState(false);
+import { useServerPagination } from "@/hooks/useServerPagination";
 
+const LegalEntityTypePage = () => {
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
+
+  const {
+    data: legalEntityTypesList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllLegaleEntityTypes(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllLegaleEntityTypes();
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   const onAddlegLegalEntityTypeBtnClick = () => {
     router.push(PATH_DASHBOARD.legleEntityType.add);
@@ -83,11 +86,19 @@ const LegalEntityTypePage = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={LegleEntityTypeTableHeadings}
               data={legalEntityTypesList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

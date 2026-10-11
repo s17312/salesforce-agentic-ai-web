@@ -21,42 +21,45 @@ import {
 } from "./components/table-component-distributor-accounts";
 import { getAllDistributorAccounts } from "@/service/distributor-accounts-service";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const DistributorAccountsPage = () => {
-  const distributorAccountsList = useSelector(
-    (state) => state.distributorAccountsSlice.distributorAccountsDetails
-  );
-  const page = useSelector((state) => state.distributorAccountsSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.distributorAccountsSlice.newRowsPerPage
-  );
   const popupResponse = useSelector((state) => state.layout.popupResponse);
-  const isLoading = useSelector(
-    (state) => state.distributorAccountsSlice.isLoading
-  );
   const [serverDownError, setServerDownError] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const {
+    data: distributorAccountsList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllDistributorAccounts(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        setServerDownError(true);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllDistributorAccounts(page, rowCount, undefined, "uId", "desc");
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-        setServerDownError(true);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
-
   const onAddDistributorAccountsBtnClick = () => {
-    router.push(PATH_DASHBOARD.lostCallReason.add);
+    router.push(PATH_DASHBOARD.distributorAccounts.add);
   };
 
   const handleBreadcrumbNavigation = (path: string | undefined) => {
@@ -96,8 +99,16 @@ const DistributorAccountsPage = () => {
               // @ts-ignore
               columns={DistributorAccountsTableHeadings}
               data={distributorAccountsList}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

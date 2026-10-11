@@ -18,31 +18,41 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const Route = () => {
   const RouteList = useSelector((state) => state.routeSlice.routes);
-  const page = useSelector((state) => state.routeSlice.newPage);
-  const rowCount = useSelector((state) => state.routeSlice.newRowsPerPage);
+  const paginationDetails = useSelector((state) => state.routeSlice.paginationDetails);
   const isLoading = useSelector((state) => state.routeSlice.isLoading);
+  const totalCount = paginationDetails?.total || paginationDetails?.Total || 0;
 
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    page: serverPage,
+    pageSize: serverPageSize,
+    handleSearchChange,
+    handlePaginationModelChange,
+    handleSortModelChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllRoutes();
+        await getAllRoutes(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultPageSize: 10,
+    defaultSortColumn: "uId",
+    defaultSortOrder: "desc",
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   const onAddRouteBtnClick = () => {
     router.push(PATH_DASHBOARD.route.add);
@@ -79,6 +89,12 @@ const Route = () => {
               // @ts-ignore
               columns={RouteTableHeadings}
               data={RouteList}
+              totalCount={totalCount}
+              page={serverPage}
+              pageSize={serverPageSize}
+              onSearchChange={handleSearchChange}
+              onPaginationModelChange={handlePaginationModelChange}
+              onSortModelChange={handleSortModelChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               isLoading={isLoading}
               //@ts-ignore

@@ -20,36 +20,39 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const ProductCategoryPage = () => {
-  const productcategoryList = useSelector(
-    (state) => state.productCategorySlice.productCategorys
-  );
-  const rowCount = useSelector(
-    (state) => state.productCategorySlice.newRowsPerPage
-  );
-  const isLoading = useSelector(
-    (state) => state.productCategorySlice.isLoading
-  );
-  const page = useSelector((state) => state.productCategorySlice.newPage);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    data: productcategoryList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllProductCategory();
+        return await getAllProductCategory(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   const handleBreadcrumbNavigation = (path: string | undefined) => {
     if (path) {
@@ -76,11 +79,19 @@ const ProductCategoryPage = () => {
             <DataTable
               sx={{ ...dataGridStyle }}
               getRowId={(row) => row.uId}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               //@ts-ignore
               columns={ProductCategoryTableHeadings}
               data={productcategoryList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

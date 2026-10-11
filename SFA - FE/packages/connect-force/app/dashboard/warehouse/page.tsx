@@ -20,15 +20,37 @@ import { getAllWarehouse } from "@/service/warehouse";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const Warehouses = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [serverDownError, setServerDownError] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const warehouses = useSelector((state) => state.warehouseSlice.warehouses);
-  const page = useSelector((state) => state.warehouseSlice.newPage);
-  const rowCount = useSelector((state) => state.warehouseSlice.newRowsPerPage);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
+
+  const {
+    data: warehouses,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllWarehouse(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        setServerDownError(true);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleBreadcrumbNavigation = (path: string | undefined) => {
     if (path) {
@@ -37,25 +59,13 @@ const Warehouses = () => {
   };
 
   const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
   };
 
   const redirectBack = () => {
     router.push(PATH_DASHBOARD.root);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllWarehouse(page, rowCount, undefined, "uId", "desc");
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-        setServerDownError(true);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   return (
     <FsBox ref={ref} isFullScreen={isFullScreen}>
@@ -80,6 +90,15 @@ const Warehouses = () => {
             // @ts-ignore
             columns={WarehouseTableHeadings}
             data={warehouses}
+            loading={loading}
+            paginationMode="server"
+            sortingMode="server"
+            page={page}
+            pageSize={pageSize}
+            totalCount={totalCount}
+            onPaginationModelChange={onPaginationModelChange}
+            onSortModelChange={onSortModelChange}
+            onSearchChange={onSearchChange}
             rowsPerPageOptions={tableOptions.rowsPerPageOptions}
             //@ts-ignore
             filterByColumn={true}

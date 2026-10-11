@@ -22,29 +22,38 @@ import { getAllTitles } from "@/service/titles.service";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const TitlePage = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const titleList = useSelector((state) => state.titleSlice.titles);
-  const page = useSelector((state) => state.titleSlice.newPage);
-  const rowCount = useSelector((state) => state.titleSlice.newRowsPerPage);
-  const isLoading = useSelector((state) => state.titleSlice.isLoading);
   const title = useSelector((state) => state.titleSlice.title);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [serverDownError, setServerDownError] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    data: titleList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllTitles();
+        return await getAllTitles(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -97,7 +106,15 @@ const TitlePage = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
-              isLoading={isLoading}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={TitleTableHeadings}
               data={titleList}

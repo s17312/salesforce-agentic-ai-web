@@ -18,31 +18,39 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
-const UOM = () => {
-  const UOMList = useSelector((state) => state.uomSlice.uoms);
-  const page = useSelector((state) => state.uomSlice.newPage);
-  const rowCount = useSelector((state) => state.uomSlice.newRowsPerPage);
-  const isLoading = useSelector((state) => state.uomSlice.isLoading);
+import { useServerPagination } from "@/hooks/useServerPagination";
 
+const UOM = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const {
+    data: UOMList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllUOMs(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllUOMs(page, rowCount, undefined, "uId", "desc");
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   const onAddUOMBtnClick = () => {
     router.push(PATH_DASHBOARD.uom.add);
@@ -75,11 +83,19 @@ const UOM = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={UOMTableHeadings}
               data={UOMList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

@@ -14,18 +14,65 @@ import { get } from "lodash";
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const baseUrl = "outletcategory";
 
-export const getAllOutletCategories = async () => {
+export const getAllOutletCategories = async (
+  pageOrParams?:
+    | number
+    | {
+        page?: number;
+        pageSize?: number;
+        searchKeyword?: string;
+        sortColumn?: string;
+        sortOrder?: string;
+        isActive?: boolean | string;
+      },
+  pageSize?: number,
+  search?: string,
+  sortBy?: string,
+  sortOrder?: string
+) => {
   try {
-    await axiosInstance
-      .get<OutletCategoryPagedResult>(
-        `${NEXT_PUBLIC_API_URL}${baseUrl}?sortColumn=uId&sortOrder=desc`
-      )
-      .then((response) => {
-        const outletCategoryData = get(response, "data.OutletCategory", []);
-        const paginationInfo = get(response, "data.paging", {});
-        dispatch(setAllOutletCategories(outletCategoryData));
-        dispatch(setPaginationDetails(paginationInfo));
-      });
+    const params = new URLSearchParams();
+    let pageNum = 1;
+    let sizeNum = 100;
+    let searchVal = "";
+    let sortCol = "uId";
+    let sortOrd = "desc";
+
+    if (typeof pageOrParams === "object" && pageOrParams !== null) {
+      pageNum = pageOrParams.page ?? 1;
+      sizeNum = pageOrParams.pageSize ?? 10;
+      searchVal = pageOrParams.searchKeyword || "";
+      sortCol = pageOrParams.sortColumn || "uId";
+      sortOrd = pageOrParams.sortOrder || "desc";
+      if (pageOrParams.isActive !== undefined && pageOrParams.isActive !== "") {
+        params.append("IsActive", String(pageOrParams.isActive));
+      }
+    } else {
+      if (pageOrParams) pageNum = pageOrParams;
+      if (pageSize) sizeNum = pageSize;
+      if (search) searchVal = search;
+      if (sortBy) sortCol = sortBy;
+      if (sortOrder) sortOrd = sortOrder;
+    }
+
+    if (pageNum) params.append("page", pageNum.toString());
+    if (sizeNum) params.append("pageSize", sizeNum.toString());
+    if (searchVal) params.append("searchKeyword", searchVal);
+    if (sortCol) params.append("sortColumn", sortCol);
+    if (sortOrd) params.append("sortOrder", sortOrd);
+
+    const response = await axiosInstance.get<OutletCategoryPagedResult>(
+      `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
+    );
+    const outletCategoryData = get(response, "data.OutletCategory", get(response, "data.result", []));
+    const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
+    dispatch(setAllOutletCategories(outletCategoryData));
+    dispatch(setPaginationDetails(paginationInfo));
+    return {
+      data: outletCategoryData,
+      total: (paginationInfo as any)?.total ?? 0,
+      paging: paginationInfo,
+    };
   } catch (error) {
     dispatch(setOutletCategoryError(serverDownErrorMessage));
     throw new Error();

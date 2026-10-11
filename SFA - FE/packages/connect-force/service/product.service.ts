@@ -59,7 +59,16 @@ export const createBulkProductList = async (file: File) => {
 };
 
 export const getAllProducts = async (
-  page?: number,
+  pageOrParams?: number | {
+    page?: number;
+    pageSize?: number;
+    searchKeyword?: string;
+    search?: string;
+    sortColumn?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    isActive?: boolean;
+  },
   pageSize?: number,
   search?: string,
   sortBy?: string,
@@ -70,26 +79,49 @@ export const getAllProducts = async (
   try {
     const params = new URLSearchParams();
 
-    if (page) params.append("page", page.toString());
-    if (pageSize) params.append("pageSize", pageSize.toString());
-    if (search) params.append("search", search);
-    if (sortBy) params.append("sortColumn", sortBy);
-    if (sortOrder) params.append("sortOrder", sortOrder);
-    if (isActive !== undefined) params.append("IsActive", isActive.toString());
+    let p: number | undefined;
+    let ps: number | undefined;
+    let kw: string | undefined;
+    let col: string | undefined;
+    let ord: string | undefined;
+    let active: boolean | undefined;
+
+    if (typeof pageOrParams === 'object' && pageOrParams !== null) {
+      p = pageOrParams.page;
+      ps = pageOrParams.pageSize;
+      kw = pageOrParams.searchKeyword || pageOrParams.search;
+      col = pageOrParams.sortColumn || pageOrParams.sortBy;
+      ord = pageOrParams.sortOrder;
+      active = pageOrParams.isActive;
+    } else {
+      p = pageOrParams;
+      ps = pageSize;
+      kw = search;
+      col = sortBy;
+      ord = sortOrder;
+      active = isActive;
+    }
+
+    if (p) params.append("page", p.toString());
+    if (ps) params.append("pageSize", ps.toString());
+    if (kw) params.append("searchKeyword", kw);
+    params.append("sortColumn", col || "uId");
+    params.append("sortOrder", ord || "desc");
+    if (active !== undefined) params.append("IsActive", active.toString());
+
     await axiosInstance
       .get<ProductPagedResult>(
-        // `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
-        `${NEXT_PUBLIC_API_URL}${baseUrl}?sortColumn=uId&sortOrder=desc`
+        `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
       )
       .then((response) => {
         const distributionData = get(response, "data.Product", []);
-        const paginationInfo = get(response, "data.paging", {});
+        const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
         dispatch(setAllProducts(distributionData));
         dispatch(setPaginationDetails(paginationInfo));
       });
   } catch (error: ErrorType | any) {
     dispatch(setProductError(serverDownErrorMessage));
-    throw new Error(error.response.data.details[0].description);
+    throw new Error(error?.response?.data?.details?.[0]?.description || serverDownErrorMessage);
   }
 };
 
@@ -206,7 +238,16 @@ export const updateProductStatus = async (
 
 //Optimize the product list API
 export const getAllProductsList = async (
-  page?: number,
+  pageOrParams?: number | {
+    page?: number;
+    pageSize?: number;
+    searchKeyword?: string;
+    search?: string;
+    sortColumn?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    isActive?: boolean;
+  },
   pageSize?: number,
   search?: string,
   sortBy?: string,
@@ -217,24 +258,48 @@ export const getAllProductsList = async (
   try {
     const params = new URLSearchParams();
 
-    if (page) params.append("page", page.toString());
-    if (pageSize) params.append("pageSize", pageSize.toString());
-    if (search) params.append("search", search);
-    if (sortBy) params.append("sortColumn", sortBy);
-    if (sortOrder) params.append("sortOrder", sortOrder);
-    if (isActive !== undefined) params.append("IsActive", isActive.toString());
+    let p: number | undefined;
+    let ps: number | undefined;
+    let kw: string | undefined;
+    let col: string | undefined;
+    let ord: string | undefined;
+    let active: boolean | undefined;
+
+    if (typeof pageOrParams === 'object' && pageOrParams !== null) {
+      p = pageOrParams.page;
+      ps = pageOrParams.pageSize;
+      kw = pageOrParams.searchKeyword || pageOrParams.search;
+      col = pageOrParams.sortColumn || pageOrParams.sortBy;
+      ord = pageOrParams.sortOrder;
+      active = pageOrParams.isActive;
+    } else {
+      p = pageOrParams;
+      ps = pageSize;
+      kw = search;
+      col = sortBy;
+      ord = sortOrder;
+      active = isActive;
+    }
+
+    if (p) params.append("page", p.toString());
+    if (ps) params.append("pageSize", ps.toString());
+    if (kw) params.append("searchKeyword", kw);
+    params.append("sortColumn", col || "uId");
+    params.append("sortOrder", ord || "desc");
+    if (active !== undefined) params.append("IsActive", active.toString());
+
     await axiosInstance
       .get<ProductPagedResult>(
-        `${NEXT_PUBLIC_API_URL}${baseUrl}/new?sortColumn=uId&sortOrder=desc`
+        `${NEXT_PUBLIC_API_URL}${baseUrl}/new?${params.toString()}`
       )
       .then((response) => {
         const distributionData = get(response, "data.Product", []);
-        const paginationInfo = get(response, "data.paging", {});
+        const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
         dispatch(setAllProducts(distributionData));
         dispatch(setPaginationDetails(paginationInfo));
       });
   } catch (error: ErrorType | any) {
     dispatch(setProductError(serverDownErrorMessage));
-    throw new Error(error.response.data.details[0].description);
+    throw new Error(error?.response?.data?.details?.[0]?.description || serverDownErrorMessage);
   }
 };

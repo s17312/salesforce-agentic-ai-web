@@ -20,29 +20,34 @@ import { setPopupResponse } from "@/redux/slices/layout-slice";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const ProductGroupPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
-  const productGroupList = useSelector(
-    (state) => state.productGroupSlice.productGroups
-  );
-  const page = useSelector((state) => state.productGroupSlice.newPage);
-  const isLoading = useSelector((state) => state.productGroupSlice.isLoading);
-  const rowCount = useSelector(
-    (state) => state.productGroupSlice.newRowsPerPage
-  );
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  useEffect(() => {
-    const fetachData = async () => {
+  const {
+    data: productGroupList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllProductGroups();
+        return await getAllProductGroups(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
       }
-    };
-    fetachData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
@@ -68,13 +73,20 @@ const ProductGroupPage = () => {
             <DataTable
               sx={{ ...dataGridStyle }}
               getRowId={(row) => row.uId}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={productGroupTableHeadings}
               data={productGroupList}
-              isLoading={isLoading}
               //@ts-ignore
               menuItems={tableOptions.menuItems}
-              showToolbar={false}
               filterByColumn={true}
               handleAdd={() => {
                 router.push(PATH_DASHBOARD.productGroup.add);

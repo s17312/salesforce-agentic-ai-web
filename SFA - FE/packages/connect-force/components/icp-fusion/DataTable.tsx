@@ -21,7 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { alpha } from '@mui/material/styles';
 import { useThemeContext } from '@/context/ThemeContext';
-import { CustomNoRowsOverlay } from '@/components/data-grid/noRowOverlay';
+import { CustomNoRowsOverlay, TableSkeletonOverlay } from '@/components/data-grid/noRowOverlay';
 
 export interface IDataTableProps {
   title?: string;
@@ -47,10 +47,19 @@ export interface IDataTableProps {
   filterByColumn?: boolean;
   handleAdd?: () => void;
   rowCount?: number;
+  totalCount?: number;
   handleTableBtnClick?: () => void;
   isTableBtnDisabled?: boolean;
   tableBtnText?: string;
   tableBtnIcon?: React.ReactNode;
+  isLoading?: boolean;
+  paginationMode?: 'client' | 'server';
+  sortingMode?: 'client' | 'server';
+  page?: number;
+  pageSize?: number;
+  onSearchChange?: (keyword: string) => void;
+  onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
+  onSortModelChange?: (model: any[]) => void;
 }
 
 export function DataTable({
@@ -70,6 +79,15 @@ export function DataTable({
   sx,
   handleAdd,
   rowCount,
+  totalCount,
+  isLoading,
+  paginationMode,
+  sortingMode,
+  page,
+  pageSize,
+  onSearchChange,
+  onPaginationModelChange,
+  onSortModelChange,
   handleTableBtnClick,
   isTableBtnDisabled,
   tableBtnText,
@@ -126,14 +144,17 @@ export function DataTable({
 
   const finalColumns = [...columns, ...actionColumn];
 
-  // Client-side search filtering
-  const filteredData = searchQuery
-    ? rawData.filter((row: any) =>
-        Object.values(row).some(
-          (val) => val !== null && val !== undefined && String(val).toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      )
-    : rawData;
+  // If server-side mode is active, data is already queried/filtered from Backend
+  const isServer = paginationMode === 'server' || totalCount !== undefined || !!onPaginationModelChange;
+  const filteredData = isServer
+    ? rawData
+    : (searchQuery
+        ? rawData.filter((row: any) =>
+            Object.values(row).some(
+              (val) => val !== null && val !== undefined && String(val).toLowerCase().includes(searchQuery.toLowerCase())
+            )
+          )
+        : rawData);
 
   const btnLabelText = tableBtnText ? tableBtnText.replace(/^\+\s*/, '') : 'Register';
 
@@ -191,7 +212,13 @@ export function DataTable({
               size="small"
               placeholder="Search..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (onSearchChange) {
+                  onSearchChange(val);
+                }
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -266,25 +293,43 @@ export function DataTable({
           autoHeight={filteredData.length === 0}
           rows={filteredData}
           columns={finalColumns}
+          loading={isLoading || gridProps.loading}
           getRowId={getRowId || ((row) => row.uId || row.id || row.code || Math.random().toString())}
           pageSizeOptions={rowsPerPageOptions}
           checkboxSelection={isSelectableRows}
           density={density}
-          rowCount={rowCount || filteredData.length}
-          initialState={{
-            pagination: { paginationModel: { pageSize: rowsPerPageOptions[0] || 100, page: 0 } },
-          }}
+          rowCount={totalCount !== undefined ? totalCount : (rowCount !== undefined ? rowCount : filteredData.length)}
+          paginationMode={paginationMode || (isServer ? 'server' : 'client')}
+          sortingMode={sortingMode || (onSortModelChange ? 'server' : 'client')}
+          paginationModel={
+            isServer && page !== undefined && pageSize !== undefined
+              ? { page, pageSize }
+              : undefined
+          }
+          onPaginationModelChange={onPaginationModelChange}
+          onSortModelChange={onSortModelChange}
+          initialState={
+            !isServer
+              ? {
+                  pagination: { paginationModel: { pageSize: rowsPerPageOptions[0] || 100, page: 0 } },
+                }
+              : undefined
+          }
           slots={{
+            loadingOverlay: () => (
+              <TableSkeletonOverlay
+                columns={finalColumns}
+                rowCount={7}
+              />
+            ),
             noRowsOverlay: () => (
               <CustomNoRowsOverlay
-                onAdd={handleAdd || handleTableBtnClick}
-                buttonText={tableBtnText || 'Add Entry'}
+                showButton={false}
               />
             ),
             noResultsOverlay: () => (
               <CustomNoRowsOverlay
-                onAdd={handleAdd || handleTableBtnClick}
-                buttonText={tableBtnText || 'Add Entry'}
+                showButton={false}
               />
             ),
           }}
@@ -338,6 +383,18 @@ export function DataTable({
               alignItems: 'center !important',
               justifyContent: 'center !important',
               backgroundColor: 'transparent !important',
+            },
+            '& .MuiDataGrid-loadingOverlay': {
+              alignItems: 'stretch !important',
+              justifyContent: 'flex-start !important',
+              display: 'block !important',
+              backgroundColor: '#ffffff !important',
+              width: '100% !important',
+              height: '100% !important',
+              position: 'absolute !important',
+              top: '0 !important',
+              left: '0 !important',
+              zIndex: 10,
             },
             '& .MuiDataGrid-footerContainer': {
               borderTop: 'none',

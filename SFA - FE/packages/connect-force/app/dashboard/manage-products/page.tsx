@@ -23,10 +23,12 @@ import {
   tableOptions,
 } from "./components/table-component-product";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const ProductPage = () => {
   const productList = useSelector((state) => state.product.products);
-  const page = useSelector((state) => state.product.newPage);
-  const rowCount = useSelector((state) => state.product.newRowsPerPage);
+  const paginationDetails = useSelector((state) => state.product.paginationDetails);
+  const totalCount = (paginationDetails as any)?.total || (paginationDetails as any)?.Total || 0;
   const product = useSelector((state) => state.product.product);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
   const isLoading = useSelector((state) => state.product.isLoading);
@@ -36,22 +38,25 @@ const ProductPage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-    toggleFullScreen();
-    setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    page: serverPage,
+    pageSize: serverPageSize,
+    handleSearchChange,
+    handlePaginationModelChange,
+    handleSortModelChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllProductsList();
+        await getAllProductsList(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultPageSize: 10,
+    defaultSortColumn: "uId",
+    defaultSortOrder: "desc",
+  });
 
   const redirectBack = () => {
     router.push(PATH_DASHBOARD.root);
@@ -69,6 +74,11 @@ const ProductPage = () => {
     if (path) {
       router.push(path);
     }
+  };
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
   };
 
   return (
@@ -98,6 +108,13 @@ const ProductPage = () => {
               // @ts-ignore
               columns={ProductTableHeadings}
               data={productList}
+              totalCount={totalCount}
+              page={serverPage}
+              pageSize={serverPageSize}
+              onSearchChange={handleSearchChange}
+              onPaginationModelChange={handlePaginationModelChange}
+              onSortModelChange={handleSortModelChange}
+              isLoading={isLoading}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore
               filterByColumn={true}

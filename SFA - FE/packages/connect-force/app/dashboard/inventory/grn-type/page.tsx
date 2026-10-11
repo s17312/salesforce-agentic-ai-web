@@ -18,43 +18,42 @@ import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { GRNTypeTableHeadings, tableOptions } from "./components/table-component-grnType";
 import { getAllGRNTypeDetails } from "@/service/inventory/grn-type.service";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const GRNTypePage = () => {
-  const grnTypeList = useSelector(
-    (state) => state.grnTypeSlice.grnTypeDetails
-  );
-  const page = useSelector((state) => state.grnTypeSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.grnTypeSlice.newRowsPerPage
-  );
   const popupResponse = useSelector((state) => state.layout.popupResponse);
-  const isLoading = useSelector((state) => state.grnTypeSlice.isLoading);
   const [serverDownError, setServerDownError] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const {
+    data: grnTypeList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllGRNTypeDetails(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        setServerDownError(true);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllGRNTypeDetails(
-          page,
-          rowCount,
-          undefined,
-          "uId",
-          "desc"
-        );
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-        setServerDownError(true);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   const onAddGRNTypeBtnClick = () => {
     router.push(PATH_DASHBOARD.grnType.add);
@@ -97,8 +96,16 @@ const GRNTypePage = () => {
               // @ts-ignore
               columns={GRNTypeTableHeadings}
               data={grnTypeList}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

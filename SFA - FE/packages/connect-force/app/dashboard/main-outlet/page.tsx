@@ -23,12 +23,16 @@ import {
   tableOptions,
 } from "./components/table-component-main-outlet";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const MainOutletPage = () => {
   const mainOutletList = useSelector(
     (state) => state.mainOutletSlice.mainOutlets
   );
-  const page = useSelector((state) => state.mainOutletSlice.newPage);
-  const rowCount = useSelector((state) => state.mainOutletSlice.newRowsPerPage);
+  const paginationDetails = useSelector(
+    (state) => state.mainOutletSlice.paginationDetails
+  );
+  const totalCount = (paginationDetails as any)?.total || (paginationDetails as any)?.Total || 0;
   const isLoading = useSelector((state) => state.mainOutletSlice.isLoading);
   const mainOutlet = useSelector((state) => state.mainOutletSlice.mainOutlet);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
@@ -37,22 +41,30 @@ const MainOutletPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleFullScreenClick = () => {
-    toggleFullScreen();
-    setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    page: serverPage,
+    pageSize: serverPageSize,
+    handleSearchChange,
+    handlePaginationModelChange,
+    handleSortModelChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllMainOutlets(undefined, undefined, undefined, "uId", "desc");
+        await getAllMainOutlets(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultPageSize: 10,
+    defaultSortColumn: "uId",
+    defaultSortOrder: "desc",
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   const redirectBack = () => {
     router.push(PATH_DASHBOARD.root);
@@ -95,6 +107,12 @@ const MainOutletPage = () => {
               // @ts-ignore
               columns={MainOutletTableHeadings}
               data={mainOutletList}
+              totalCount={totalCount}
+              page={serverPage}
+              pageSize={serverPageSize}
+              onSearchChange={handleSearchChange}
+              onPaginationModelChange={handlePaginationModelChange}
+              onSortModelChange={handleSortModelChange}
               isLoading={isLoading}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore

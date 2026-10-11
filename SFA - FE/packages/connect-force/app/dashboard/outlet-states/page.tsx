@@ -20,34 +20,39 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
-const OutletStatusPage = () => {
-  const outletstatusList = useSelector(
-    (state) => state.outletStatusSlice.outletStatuss
-  );
-  const page = useSelector((state) => state.outletStatusSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.outletStatusSlice.newRowsPerPage
-  );
+import { useServerPagination } from "@/hooks/useServerPagination";
 
+const OutletStatusPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const {
+    data: outletstatusList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllOutletStatus(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllOutletStatus();
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   const handleBreadcrumbNavigation = (path: string | undefined) => {
     if (path) {
@@ -75,12 +80,20 @@ const OutletStatusPage = () => {
             <DataTable
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               //@ts-ignore
               columns={OutletStatusTableHeadings}
               data={outletstatusList}
               //@ts-ignore
               menuItems={tableOptions.menuItems}
-              showToolbar={false}
               filterByColumn={true}
               handleAdd={() => {
                 router.push(PATH_DASHBOARD.outletstatus.add);

@@ -21,45 +21,42 @@ import { getAllVehicleCategoryDetails } from "@/service/vehicleCategory.service"
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const VehicleCategoryPage = () => {
-  const vehicleCategoryList = useSelector(
-    (state) => state.vehicleCategorySlice.vehicleCategoryDetails
-  );
-  const page = useSelector((state) => state.vehicleCategorySlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.vehicleCategorySlice.newRowsPerPage
-  );
   const popupResponse = useSelector((state) => state.layout.popupResponse);
-  const isLoading = useSelector(
-    (state) => state.vehicleCategorySlice.isLoading
-  );
   const [serverDownError, setServerDownError] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    data: vehicleCategoryList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllVehicleCategoryDetails(
-          page,
-          rowCount,
-          undefined,
-          "uId",
-          "desc"
-        );
+        return await getAllVehicleCategoryDetails(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   const onAddVehicleCategoryBtnClick = () => {
     router.push(PATH_DASHBOARD.vehicleCategory.add);
@@ -99,11 +96,19 @@ const VehicleCategoryPage = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={VehicleCategoryTableHeadings}
               data={vehicleCategoryList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

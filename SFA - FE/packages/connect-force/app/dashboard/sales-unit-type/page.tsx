@@ -22,39 +22,38 @@ import { getAllSalesUnitTypeDetails } from "@/service/salesUnitType.service";
 import PopupResponse from "@/components/popup/popup-response";
 import ListAltRoundedIcon from "@mui/icons-material/ListAltRounded";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const SalesUnitTypePage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const theme = useTheme();
-  const page = useSelector((state) => state.salesUnitTypeSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.salesUnitTypeSlice.newRowsPerPage
-  );
-  const isLoading = useSelector((state) => state.salesUnitTypeSlice.isLoading);
   const [serverDownError, setServerDownError] = useState(false);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
-  const salesUnitTypeList = useSelector(
-    (state) => state.salesUnitTypeSlice.salesUnitTypeDetails
-  );
   const [isFullScreen, setIsFullScreen] = useState(false);
-  
-  useEffect(() => {
-    const fetchData = async () => {
+
+  const {
+    data: salesUnitTypeList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllSalesUnitTypeDetails(
-          page,
-          rowCount,
-          undefined,
-          "uId",
-          "desc"
-        );
+        return await getAllSalesUnitTypeDetails(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const onAddSalesUnitTypeBtnClick = () => {
     router.push(PATH_DASHBOARD.salesUnitType.add);
@@ -71,8 +70,8 @@ const SalesUnitTypePage = () => {
   };
 
   const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
   };
   return (
     <FsBox ref={ref} isFullScreen={isFullScreen}>
@@ -102,8 +101,16 @@ const SalesUnitTypePage = () => {
               // @ts-ignore
               columns={SalesUnitTypeTableHeadings}
               data={salesUnitTypeList}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               // @ts-ignore
               filterByColumn={true} 
               handleAdd={() => router.push(PATH_DASHBOARD.salesUnitType.add)}
