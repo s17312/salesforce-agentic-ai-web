@@ -22,6 +22,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { alpha } from '@mui/material/styles';
 import { useThemeContext } from '@/context/ThemeContext';
 import { CustomNoRowsOverlay, TableSkeletonOverlay } from '@/components/data-grid/noRowOverlay';
+import {
+  TABLE_CONTAINER_MIN_HEIGHT,
+  TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT,
+  TABLE_OVERLAY_MIN_HEIGHT,
+  TABLE_HEADER_MIN_HEIGHT,
+  TABLE_HEADER_MAX_HEIGHT,
+  DEFAULT_ROWS_PER_PAGE_OPTIONS,
+  SKELETON_DEFAULT_ROW_COUNT,
+  TABLE_FALLBACK_THEME,
+  ACTION_ICON_COLORS,
+} from '@/constants';
 
 export interface IDataTableProps {
   title?: string;
@@ -68,7 +79,7 @@ export function DataTable({
   data = [],
   rows: rowsFromProps,
   getRowId,
-  rowsPerPageOptions = [100, 25, 50, 10],
+  rowsPerPageOptions = DEFAULT_ROWS_PER_PAGE_OPTIONS,
   isSearch = true,
   isSelectableRows = false,
   handleView,
@@ -116,21 +127,21 @@ export function DataTable({
                 <Stack direction="row" spacing={0.5}>
                   {handleView && (
                     <Tooltip title="View">
-                      <IconButton size="small" sx={{ color: '#00B8D9' }} onClick={() => handleView(id)}>
+                      <IconButton size="small" sx={{ color: ACTION_ICON_COLORS.view }} onClick={() => handleView(id)}>
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   )}
                   {handleEdit && (
                     <Tooltip title="Edit">
-                      <IconButton size="small" sx={{ color: '#7D56EC' }} onClick={() => handleEdit(id)}>
+                      <IconButton size="small" sx={{ color: ACTION_ICON_COLORS.edit }} onClick={() => handleEdit(id)}>
                         <EditIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   )}
                   {handleDelete && (
                     <Tooltip title="Delete">
-                      <IconButton size="small" sx={{ color: '#FF5630' }} onClick={() => handleDelete(id)}>
+                      <IconButton size="small" sx={{ color: ACTION_ICON_COLORS.delete }} onClick={() => handleDelete(id)}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -288,7 +299,7 @@ export function DataTable({
       </Box>
 
       {/* DataGrid Container with Purple Header & Grid */}
-      <Box sx={{ width: '100%', minHeight: 400, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ width: '100%', minHeight: TABLE_CONTAINER_MIN_HEIGHT, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <DataGrid
           autoHeight={filteredData.length === 0}
           rows={filteredData}
@@ -311,7 +322,7 @@ export function DataTable({
           initialState={
             !isServer
               ? {
-                  pagination: { paginationModel: { pageSize: rowsPerPageOptions[0] || 100, page: 0 } },
+                  pagination: { paginationModel: { pageSize: rowsPerPageOptions[0] || DEFAULT_ROWS_PER_PAGE_OPTIONS[0], page: 0 } },
                 }
               : undefined
           }
@@ -319,7 +330,7 @@ export function DataTable({
             loadingOverlay: () => (
               <TableSkeletonOverlay
                 columns={finalColumns}
-                rowCount={7}
+                rowCount={SKELETON_DEFAULT_ROW_COUNT}
               />
             ),
             noRowsOverlay: () => (
@@ -339,46 +350,46 @@ export function DataTable({
             width: '100%',
             flexGrow: 1,
             '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: `${currentTheme?.headerTint || '#ede9fe'} !important`,
+              backgroundColor: `${currentTheme?.headerTint || TABLE_FALLBACK_THEME.headerTint} !important`,
               borderRadius: '12px 12px 0 0',
               borderBottom: 'none',
-              minHeight: '48px !important',
-              maxHeight: '48px !important',
+              minHeight: `${TABLE_HEADER_MIN_HEIGHT}px !important`,
+              maxHeight: `${TABLE_HEADER_MAX_HEIGHT}px !important`,
             },
             '& .MuiDataGrid-columnHeader': {
-              backgroundColor: `${currentTheme?.headerTint || '#ede9fe'} !important`,
-              color: currentTheme?.textPrimary || '#0f172a',
+              backgroundColor: `${currentTheme?.headerTint || TABLE_FALLBACK_THEME.headerTint} !important`,
+              color: currentTheme?.textPrimary || TABLE_FALLBACK_THEME.textPrimary,
               fontWeight: 800,
               fontSize: '0.9rem',
               '&:focus, &:focus-within': { outline: 'none' },
               '&:not(:last-child)': {
-                borderRight: `1.5px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.12)}`,
+                borderRight: `1.5px solid ${alpha(currentTheme?.primaryMain || TABLE_FALLBACK_THEME.primaryMain, 0.12)}`,
               },
             },
             '& .MuiDataGrid-columnHeaderTitle': {
               fontWeight: 800,
-              color: currentTheme?.textPrimary || '#0f172a',
+              color: currentTheme?.textPrimary || TABLE_FALLBACK_THEME.textPrimary,
             },
             '& .MuiDataGrid-cell': {
-              borderBottom: `1px solid ${alpha(currentTheme?.primaryMain || '#6366f1', 0.08)}`,
-              color: currentTheme?.textPrimary || '#0f172a',
+              borderBottom: `1px solid ${alpha(currentTheme?.primaryMain || TABLE_FALLBACK_THEME.primaryMain, 0.08)}`,
+              color: currentTheme?.textPrimary || TABLE_FALLBACK_THEME.textPrimary,
               fontSize: '0.875rem',
               '&:focus, &:focus-within': { outline: 'none' },
             },
             '& .MuiDataGrid-row': {
               '&:hover': {
-                backgroundColor: `${alpha(currentTheme?.headerTint || '#ede9fe', 0.45)}`,
+                backgroundColor: `${alpha(currentTheme?.headerTint || TABLE_FALLBACK_THEME.headerTint, 0.45)}`,
               },
             },
             '& .MuiDataGrid-virtualScroller': {
-              minHeight: filteredData.length === 0 ? '340px !important' : 'auto',
+              minHeight: filteredData.length === 0 ? `${TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT}px !important` : 'auto',
               overflowX: filteredData.length === 0 ? 'hidden !important' : 'auto',
             },
             '& .MuiDataGrid-virtualScrollerContent': {
-              minHeight: filteredData.length === 0 ? '340px !important' : 'auto',
+              minHeight: filteredData.length === 0 ? `${TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT}px !important` : 'auto',
             },
             '& .MuiDataGrid-overlay': {
-              minHeight: '340px !important',
+              minHeight: `${TABLE_OVERLAY_MIN_HEIGHT}px !important`,
               display: 'flex !important',
               alignItems: 'center !important',
               justifyContent: 'center !important',

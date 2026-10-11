@@ -22,6 +22,7 @@ import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const VehicleCategoryPage = () => {
   const popupResponse = useSelector((state) => state.layout.popupResponse);
@@ -49,8 +50,8 @@ const VehicleCategoryPage = () => {
         return { data: [], total: 0 };
       }
     },
-    defaultSort: { field: "uId", sort: "desc" },
-    initialPageSize: 10,
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

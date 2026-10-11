@@ -19,6 +19,7 @@ import { GRNTypeTableHeadings, tableOptions } from "./components/table-component
 import { getAllGRNTypeDetails } from "@/service/inventory/grn-type.service";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const GRNTypePage = () => {
   const popupResponse = useSelector((state) => state.layout.popupResponse);
@@ -46,8 +47,8 @@ const GRNTypePage = () => {
         return { data: [], total: 0 };
       }
     },
-    defaultSort: { field: "uId", sort: "desc" },
-    initialPageSize: 10,
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

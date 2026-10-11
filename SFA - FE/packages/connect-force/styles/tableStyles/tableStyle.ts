@@ -1,4 +1,10 @@
 import { alpha } from "@mui/material/styles";
+import {
+  TABLE_HEADER_MIN_HEIGHT,
+  TABLE_HEADER_MAX_HEIGHT,
+  TABLE_OVERLAY_MIN_HEIGHT,
+  TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT,
+} from "@/constants";
 
 const GREY = {
   0: "#FFFFFF",
@@ -24,8 +30,8 @@ const dataGridStyle = {
     backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
     borderRadius: "10px 10px 0 0",
     borderBottom: "none",
-    minHeight: "48px !important",
-    maxHeight: "48px !important",
+    minHeight: `${TABLE_HEADER_MIN_HEIGHT}px !important`,
+    maxHeight: `${TABLE_HEADER_MAX_HEIGHT}px !important`,
   },
   "& .MuiDataGrid-columnHeader": {
     backgroundColor: "var(--primary-lighter, #e0f2fe) !important",
@@ -48,17 +54,17 @@ const dataGridStyle = {
     "&:focus, &:focus-within": { outline: "none" },
   },
   "& .MuiDataGrid-overlay": {
-    minHeight: "320px !important",
+    minHeight: `${TABLE_OVERLAY_MIN_HEIGHT}px !important`,
     display: "flex !important",
     alignItems: "center !important",
     justifyContent: "center !important",
     backgroundColor: "transparent !important",
   },
   "& .MuiDataGrid-virtualScroller": {
-    minHeight: "320px",
+    minHeight: `${TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT}px`,
   },
   "& .MuiDataGrid-virtualScrollerContent": {
-    minHeight: "320px",
+    minHeight: `${TABLE_VIRTUAL_SCROLLER_MIN_HEIGHT}px`,
   },
 };
 

@@ -19,6 +19,7 @@ import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const Route = () => {
   const RouteList = useSelector((state) => state.routeSlice.routes);
@@ -44,9 +45,8 @@ const Route = () => {
         dispatch(setPopupResponse(true));
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

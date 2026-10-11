@@ -19,6 +19,7 @@ import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const UOM = () => {
   const router = useRouter();
@@ -43,8 +44,8 @@ const UOM = () => {
         return { data: [], total: 0 };
       }
     },
-    defaultSort: { field: "uId", sort: "desc" },
-    initialPageSize: 10,
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

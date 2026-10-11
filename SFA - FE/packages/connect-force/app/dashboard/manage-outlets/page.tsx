@@ -24,6 +24,7 @@ import {
 } from "./components/table-component-outlet";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const OutletPage = () => {
   const outletList = useSelector((state) => state.outlet.outlets);
@@ -52,9 +53,8 @@ const OutletPage = () => {
         setServerDownError(true);
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const redirectBack = () => {

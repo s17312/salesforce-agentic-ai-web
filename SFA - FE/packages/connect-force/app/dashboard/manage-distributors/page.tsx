@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from "react";
 import { DistributorTableHeadings, tableOptions } from "./components/table-component-distributor";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const DistributorPage = () => {
   const router = useRouter();
@@ -50,9 +51,8 @@ const DistributorPage = () => {
         setServerDownError(true);
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   function capitalizeFirstLetter(string: any) {

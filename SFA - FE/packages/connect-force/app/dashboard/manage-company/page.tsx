@@ -23,6 +23,7 @@ import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const CompanyPage = () => {
   const companyList = useSelector((state) => state.companySlice.companies);
@@ -52,9 +53,8 @@ const CompanyPage = () => {
         setServerDownError(true);
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

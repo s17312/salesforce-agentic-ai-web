@@ -4,6 +4,16 @@ import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useTheme, alpha } from "@mui/material/styles";
 import GoogleIcon from "@/components/icons/GoogleIcon";
+import {
+  EMPTY_STATE_TITLE,
+  EMPTY_STATE_SUBTITLE,
+  EMPTY_STATE_ICON,
+  EMPTY_STATE_ICON_SIZE,
+  EMPTY_STATE_ICON_BOX_SIZE,
+  EMPTY_STATE_DEFAULT_BUTTON_TEXT,
+  TABLE_OVERLAY_MIN_HEIGHT,
+  TABLE_FALLBACK_THEME,
+} from "@/constants";
 
 export interface CustomNoRowsOverlayProps {
   onAdd?: () => void;
@@ -16,11 +26,11 @@ export interface CustomNoRowsOverlayProps {
 
 export function CustomNoRowsOverlay({
   onAdd,
-  buttonText = "Add Entry",
-  title = "No data to display",
-  subtitle = "There are no records in this table yet.",
+  buttonText = EMPTY_STATE_DEFAULT_BUTTON_TEXT,
+  title = EMPTY_STATE_TITLE,
+  subtitle = EMPTY_STATE_SUBTITLE,
   showButton = false,
-  googleIconName = "table_chart",
+  googleIconName = EMPTY_STATE_ICON,
 }: CustomNoRowsOverlayProps) {
   const theme = useTheme();
   const formattedButtonText = buttonText.startsWith("+") ? buttonText : `+ ${buttonText}`;
@@ -33,31 +43,31 @@ export function CustomNoRowsOverlay({
         alignItems: "center",
         justifyContent: "center",
         height: "100%",
-        minHeight: 300,
+        minHeight: TABLE_OVERLAY_MIN_HEIGHT,
         py: 5,
         px: 2,
         textAlign: "center",
       }}
     >
-      {/* Box with Google Fonts Icon matching Image 2 */}
+      {/* Box with Google Fonts Icon */}
       <Box
         sx={{
-          width: 52,
-          height: 52,
+          width: EMPTY_STATE_ICON_BOX_SIZE,
+          height: EMPTY_STATE_ICON_BOX_SIZE,
           borderRadius: "12px",
-          bgcolor: theme.palette.primary?.lighter || "#f4f5f8",
+          bgcolor: theme.palette.primary?.lighter || TABLE_FALLBACK_THEME.emptyIconBoxBg,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           mb: 2,
-          border: `1px solid ${alpha(theme.palette.primary?.main || "#111827", 0.15)}`,
+          border: `1px solid ${alpha(theme.palette.primary?.main || TABLE_FALLBACK_THEME.textPrimary, 0.15)}`,
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
         }}
       >
         <GoogleIcon
           name={googleIconName}
-          size={28}
-          color={theme.palette.primary?.main || "#111827"}
+          size={EMPTY_STATE_ICON_SIZE}
+          color={theme.palette.primary?.main || TABLE_FALLBACK_THEME.textPrimary}
           weight={500}
         />
       </Box>
