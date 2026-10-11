@@ -22,10 +22,13 @@ import { getAllCompany } from "@/service/company.service";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const CompanyPage = () => {
   const companyList = useSelector((state) => state.companySlice.companies);
-  const page = useSelector((state) => state.companySlice.newPage);
-  const rowCount = useSelector((state) => state.companySlice.newRowsPerPage);
+  const paginationDetails = useSelector((state) => state.companySlice.paginationDetails);
+  const totalCount = (paginationDetails as any)?.total || (paginationDetails as any)?.Total || 0;
+  const isLoading = useSelector((state) => state.companySlice.isLoading);
   const company = useSelector((state) => state.companySlice.company);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
 
@@ -34,22 +37,30 @@ const CompanyPage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-    toggleFullScreen();
-    setIsFullScreen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    page: serverPage,
+    pageSize: serverPageSize,
+    handleSearchChange,
+    handlePaginationModelChange,
+    handleSortModelChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllCompany(page, rowCount, undefined, "uId", "desc");
+        await getAllCompany(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultPageSize: 10,
+    defaultSortColumn: "uId",
+    defaultSortOrder: "desc",
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -99,6 +110,13 @@ const CompanyPage = () => {
               // @ts-ignore
               columns={CompanyTableHeadings}
               data={companyList}
+              totalCount={totalCount}
+              page={serverPage}
+              pageSize={serverPageSize}
+              onSearchChange={handleSearchChange}
+              onPaginationModelChange={handlePaginationModelChange}
+              onSortModelChange={handleSortModelChange}
+              isLoading={isLoading}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore
               filterByColumn={true}

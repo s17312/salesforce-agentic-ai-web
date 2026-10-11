@@ -13,33 +13,42 @@ import { OutletCategoryTableHeadings, tableOptions } from "./components/table-co
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const OutletCategoryPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
-  const outletCategoryList = useSelector((state) => state.outletCategorySlice.outletCategories);
-  const page = useSelector((state) => state.outletCategorySlice.newPage);
-  const isLoading = useSelector((state) => state.outletCategorySlice.isLoading);
-  const rowCount = useSelector((state) => state.outletCategorySlice.newRowsPerPage);
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const {
+    data: outletCategoryList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllOutletCategories(params);
+      } catch (error) {
+        console.error(error);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllOutletCategories();
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
-
   const onAddOutletCategoryBtnClick = () => {
-    router.push(PATH_DASHBOARD.distributor.add);
+    router.push(PATH_DASHBOARD.outletCategory.add);
   };
 
   return (
@@ -50,7 +59,6 @@ const OutletCategoryPage = () => {
           {
             pageName: "Outlet Category",
             path: PATH_DASHBOARD.outletCategory.list,
-
           },
           { pageName: "List" },
         ]}
@@ -63,13 +71,20 @@ const OutletCategoryPage = () => {
             <DataTable
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={OutletCategoryTableHeadings}
               data={outletCategoryList}
-              isLoading={isLoading}
               //@ts-ignore
               menuItems={tableOptions.menuItems}
-              showToolbar={false}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

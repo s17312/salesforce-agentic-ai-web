@@ -21,31 +21,42 @@ import {
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const VehiclePage = () => {
-  const vehicleList = useSelector((state) => state.vehicleSlice.vehicleDetails);
-  const page = useSelector((state) => state.vehicleSlice.newPage);
-  const rowCount = useSelector((state) => state.vehicleSlice.newRowsPerPage);
   const popupResponse = useSelector((state) => state.layout.popupResponse);
   const [serverDownError, setServerDownError] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleFullScreenClick = () => {
-      toggleFullScreen();
-      setIsFullScreen((prev) => !prev);
-  };
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    data: vehicleList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllVehicleDetails(page, rowCount, undefined, "uId", "desc");
+        return await getAllVehicleDetails(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
         setServerDownError(true);
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
+  const handleFullScreenClick = () => {
+    toggleFullScreen();
+    setIsFullScreen((prev) => !prev);
+  };
 
   const onAddVehicleBtnClick = () => {
     router.push(PATH_DASHBOARD.vehicle.add);
@@ -88,6 +99,15 @@ const VehiclePage = () => {
               // @ts-ignore
               columns={VehicleTableHeadings}
               data={vehicleList}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore
               filterByColumn={true}

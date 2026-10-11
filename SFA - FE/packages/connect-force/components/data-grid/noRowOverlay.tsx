@@ -18,8 +18,8 @@ export function CustomNoRowsOverlay({
   onAdd,
   buttonText = "Add Entry",
   title = "No data to display",
-  subtitle = "There are no records in this table yet.\nAdd your first entry to get started.",
-  showButton = true,
+  subtitle = "There are no records in this table yet.",
+  showButton = false,
   googleIconName = "table_chart",
 }: CustomNoRowsOverlayProps) {
   const theme = useTheme();
@@ -122,4 +122,5 @@ export function CustomNoRowsOverlay({
 
 export const TableEmptyState = CustomNoRowsOverlay;
 export const StyledGridOverlay = CustomNoRowsOverlay;
+export { TableSkeletonOverlay } from "./tableSkeletonOverlay";
 export default CustomNoRowsOverlay;

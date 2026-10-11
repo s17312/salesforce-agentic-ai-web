@@ -37,7 +37,16 @@ export const createDistributor = async (data: any) => {
 };
 
 export const getAllDistributors = async (
-  page?: number,
+  pageOrParams?: number | {
+    page?: number;
+    pageSize?: number;
+    searchKeyword?: string;
+    search?: string;
+    sortColumn?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    isActive?: boolean;
+  },
   pageSize?: number,
   search?: string,
   sortBy?: string,
@@ -48,25 +57,49 @@ export const getAllDistributors = async (
   try {
     const params = new URLSearchParams();
 
-    if (page) params.append("page", page.toString());
-    if (pageSize) params.append("pageSize", pageSize.toString());
-    if (search) params.append("search", search);
-    if (sortBy) params.append("sortColumn", sortBy);
-    if (sortOrder) params.append("sortOrder", sortOrder);
-    if (isActive !== undefined) params.append("IsActive", isActive.toString());
+    let p: number | undefined;
+    let ps: number | undefined;
+    let kw: string | undefined;
+    let col: string | undefined;
+    let ord: string | undefined;
+    let active: boolean | undefined;
+
+    if (typeof pageOrParams === 'object' && pageOrParams !== null) {
+      p = pageOrParams.page;
+      ps = pageOrParams.pageSize;
+      kw = pageOrParams.searchKeyword || pageOrParams.search;
+      col = pageOrParams.sortColumn || pageOrParams.sortBy;
+      ord = pageOrParams.sortOrder;
+      active = pageOrParams.isActive;
+    } else {
+      p = pageOrParams;
+      ps = pageSize;
+      kw = search;
+      col = sortBy;
+      ord = sortOrder;
+      active = isActive;
+    }
+
+    if (p) params.append("page", p.toString());
+    if (ps) params.append("pageSize", ps.toString());
+    if (kw) params.append("searchKeyword", kw);
+    if (col) params.append("sortColumn", col);
+    if (ord) params.append("sortOrder", ord);
+    if (active !== undefined) params.append("IsActive", active.toString());
+
     await axiosInstance
       .get<DistributorPagedResult>(
         `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
       )
       .then((response) => {
         const distributionData = get(response, "data.Distributor", []);
-        const paginationInfo = get(response, "data.paging", {});
+        const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
         dispatch(setAllDistributors(distributionData));
         dispatch(setPaginationDetails(paginationInfo));
       });
   } catch (error: ErrorType | any) {
     dispatch(setDistributorError(serverDownErrorMessage));
-    throw new Error(error.response.data.details[0].description);
+    throw new Error(error?.response?.data?.details?.[0]?.description || serverDownErrorMessage);
   }
 };
 

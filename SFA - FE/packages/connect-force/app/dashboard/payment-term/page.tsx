@@ -21,16 +21,10 @@ import { PATH_DASHBOARD } from "@/routes/paths";
 import { getAllPaymentTerms } from "@/service/paymentTerm.service";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const PaymentTermPage = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const paymentTermList = useSelector(
-    (state) => state.paymentTermSlice.paymentTerms
-  );
-  const page = useSelector((state) => state.paymentTermSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.paymentTermSlice.newRowsPerPage
-  );
-  const isLoading = useSelector((state) => state.paymentTermSlice.isLoading);
   const paymentTerm = useSelector(
     (state) => state.paymentTermSlice.paymentTerm
   );
@@ -41,22 +35,33 @@ const PaymentTermPage = () => {
   const router = useRouter();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const {
+    data: paymentTermList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllPaymentTerms(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        setServerDownError(true);
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
+
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllPaymentTerms();
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-        setServerDownError(true);
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -104,11 +109,19 @@ const PaymentTermPage = () => {
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
               contentHeight={400}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={PaymentTermTableHeadings}
               data={paymentTermList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {

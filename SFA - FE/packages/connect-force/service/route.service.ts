@@ -15,18 +15,31 @@ import { get } from "lodash";
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const baseUrl = "route";
 
-export const getAllRoutes = async () => {
+export const getAllRoutes = async (params?: {
+  page?: number;
+  pageSize?: number;
+  searchKeyword?: string;
+  sortColumn?: string;
+  sortOrder?: 'asc' | 'desc';
+  isActive?: boolean;
+}) => {
   try {
-    await axiosInstance
-      .get<RoutePagedResult>(
-        `${NEXT_PUBLIC_API_URL}${baseUrl}?sortColumn=uId&sortOrder=desc`
-      )
-      .then((response) => {
-        const routeData = get(response, "data.Route", []);
-        const paginationInfo = get(response, "data.paging", {});
-        dispatch(setAllRoutes(routeData));
-        dispatch(setPaginationDetails(paginationInfo));
-      });
+    const query = new URLSearchParams();
+    if (params?.page) query.append("page", params.page.toString());
+    if (params?.pageSize) query.append("pageSize", params.pageSize.toString());
+    if (params?.searchKeyword) query.append("searchKeyword", params.searchKeyword);
+    query.append("sortColumn", params?.sortColumn || "uId");
+    query.append("sortOrder", params?.sortOrder || "desc");
+    if (params?.isActive !== undefined) query.append("IsActive", params.isActive.toString());
+
+    const response = await axiosInstance.get<RoutePagedResult>(
+      `${NEXT_PUBLIC_API_URL}${baseUrl}?${query.toString()}`
+    );
+    const routeData = get(response, "data.Route", []);
+    const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
+    dispatch(setAllRoutes(routeData));
+    dispatch(setPaginationDetails(paginationInfo));
+    return response.data;
   } catch (error) {
     dispatch(setRouteError(serverDownErrorMessage));
     throw new Error();

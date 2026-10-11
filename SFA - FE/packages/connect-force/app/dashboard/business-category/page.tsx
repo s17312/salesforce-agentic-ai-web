@@ -21,28 +21,34 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 
+import { useServerPagination } from "@/hooks/useServerPagination";
+
 const BusinessCategoryPage = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const businesscategoryList = useSelector(
-    (state) => state.businessCategorySlice.businessCategorys
-  );
-  const page = useSelector((state) => state.businessCategorySlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.businessCategorySlice.newRowsPerPage
-  );
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const {
+    data: businesscategoryList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
       try {
-        await getAllBusinessCategorys();
+        return await getAllBusinessCategorys(params);
       } catch (error) {
         dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
       }
-    };
-    fetchData();
-  }, [page, rowCount]);
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const onAddBusinessCategoryBtnClick = () => {
     router.push(PATH_DASHBOARD.businesscategory.add);
@@ -85,6 +91,15 @@ const BusinessCategoryPage = () => {
               // @ts-ignore
               columns={BusinessCategoryTableHeadings}
               data={businesscategoryList}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
               //@ts-ignore
               filterByColumn={true}

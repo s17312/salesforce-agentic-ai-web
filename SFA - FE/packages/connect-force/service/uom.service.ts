@@ -17,7 +17,16 @@ const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const baseUrl = "uom";
 
 export const getAllUOMs = async (
-  page?: number,
+  pageOrParams?:
+    | number
+    | {
+        page?: number;
+        pageSize?: number;
+        searchKeyword?: string;
+        sortColumn?: string;
+        sortOrder?: string;
+        isActive?: boolean | string;
+      },
   pageSize?: number,
   search?: string,
   sortBy?: string,
@@ -27,23 +36,48 @@ export const getAllUOMs = async (
   dispatch(startLoading());
   try {
     const params = new URLSearchParams();
+    let pageNum = 1;
+    let sizeNum = 100;
+    let searchVal = "";
+    let sortCol = "uId";
+    let sortOrd = "desc";
 
-    if (page) params.append("page", page.toString());
-    if (pageSize) params.append("pageSize", pageSize.toString());
-    if (search) params.append("search", search);
-    if (sortBy) params.append("sortColumn", sortBy);
-    if (sortOrder) params.append("sortOrder", sortOrder);
-    if (isActive !== undefined) params.append("IsActive", isActive.toString());
-    await axiosInstance
-      .get<UOMPagedResult>(
-        `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
-      )
-      .then((response) => {
-        const uomData = get(response, "data.UOM", []);
-        const paginationInfo = get(response, "data.paging", {});
-        dispatch(setAllUOMs(uomData));
-        dispatch(setPaginationDetails(paginationInfo));
-      });
+    if (typeof pageOrParams === "object" && pageOrParams !== null) {
+      pageNum = pageOrParams.page ?? 1;
+      sizeNum = pageOrParams.pageSize ?? 10;
+      searchVal = pageOrParams.searchKeyword || "";
+      sortCol = pageOrParams.sortColumn || "uId";
+      sortOrd = pageOrParams.sortOrder || "desc";
+      if (pageOrParams.isActive !== undefined && pageOrParams.isActive !== "") {
+        params.append("IsActive", String(pageOrParams.isActive));
+      }
+    } else {
+      if (pageOrParams) pageNum = pageOrParams;
+      if (pageSize) sizeNum = pageSize;
+      if (search) searchVal = search;
+      if (sortBy) sortCol = sortBy;
+      if (sortOrder) sortOrd = sortOrder;
+      if (isActive !== undefined) params.append("IsActive", isActive.toString());
+    }
+
+    if (pageNum) params.append("page", pageNum.toString());
+    if (sizeNum) params.append("pageSize", sizeNum.toString());
+    if (searchVal) params.append("searchKeyword", searchVal);
+    if (sortCol) params.append("sortColumn", sortCol);
+    if (sortOrd) params.append("sortOrder", sortOrd);
+
+    const response = await axiosInstance.get<UOMPagedResult>(
+      `${NEXT_PUBLIC_API_URL}${baseUrl}?${params.toString()}`
+    );
+    const uomData = get(response, "data.UOM", get(response, "data.result", []));
+    const paginationInfo = get(response, "data.pagingView", get(response, "data.paging", {}));
+    dispatch(setAllUOMs(uomData));
+    dispatch(setPaginationDetails(paginationInfo));
+    return {
+      data: uomData,
+      total: (paginationInfo as any)?.total ?? 0,
+      paging: paginationInfo,
+    };
   } catch (error) {
     dispatch(setUOMError(serverDownErrorMessage));
     throw new Error();

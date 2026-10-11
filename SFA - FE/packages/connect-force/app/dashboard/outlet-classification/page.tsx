@@ -20,38 +20,39 @@ import {
 import { FsBox } from "@/styles/fullscreen/fullscreenStyles";
 import { toggleFullScreen } from "@/utils/fullscreenUtils";
 
-const OutletClassification = () => {
-  const OutletClassificationList = useSelector(
-    (state) => state.outletClassificationSlice.outletClassifications
-  );
-  const page = useSelector((state) => state.outletClassificationSlice.newPage);
-  const rowCount = useSelector(
-    (state) => state.outletClassificationSlice.newRowsPerPage
-  );
-  const isLoading = useSelector(
-    (state) => state.outletClassificationSlice.isLoading
-  );
+import { useServerPagination } from "@/hooks/useServerPagination";
 
+const OutletClassification = () => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
-
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const {
+    data: OutletClassificationList,
+    totalCount,
+    loading,
+    page,
+    pageSize,
+    onPaginationModelChange,
+    onSortModelChange,
+    onSearchChange,
+  } = useServerPagination({
+    fetchData: async (params) => {
+      try {
+        return await getAllOutletClassifications(params);
+      } catch (error) {
+        dispatch(setPopupResponse(true));
+        return { data: [], total: 0 };
+      }
+    },
+    defaultSort: { field: "uId", sort: "desc" },
+    initialPageSize: 10,
+  });
 
   const handleFullScreenClick = () => {
     toggleFullScreen();
     setIsFullScreen((prev) => !prev);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getAllOutletClassifications();
-      } catch (error) {
-        dispatch(setPopupResponse(true));
-      }
-    };
-    fetchData();
-  }, [page, rowCount]);
 
   return (
     <FsBox ref={ref} isFullScreen={isFullScreen}>
@@ -71,11 +72,19 @@ const OutletClassification = () => {
             <DataTable
               getRowId={(row) => row.uId}
               sx={{ ...dataGridStyle }}
+              loading={loading}
+              paginationMode="server"
+              sortingMode="server"
+              page={page}
+              pageSize={pageSize}
+              totalCount={totalCount}
+              onPaginationModelChange={onPaginationModelChange}
+              onSortModelChange={onSortModelChange}
+              onSearchChange={onSearchChange}
               // @ts-ignore
               columns={OutletClassificationTableHeadings}
               data={OutletClassificationList}
               rowsPerPageOptions={tableOptions.rowsPerPageOptions}
-              isLoading={isLoading}
               //@ts-ignore
               filterByColumn={true}
               handleAdd={() => {
