@@ -24,6 +24,7 @@ import {
 } from "./components/table-component-main-outlet";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const MainOutletPage = () => {
   const mainOutletList = useSelector(
@@ -56,9 +57,8 @@ const MainOutletPage = () => {
         setServerDownError(true);
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const handleFullScreenClick = () => {

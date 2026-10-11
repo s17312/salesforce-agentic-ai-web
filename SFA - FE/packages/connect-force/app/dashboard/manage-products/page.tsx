@@ -24,6 +24,7 @@ import {
 } from "./components/table-component-product";
 
 import { useServerPagination } from "@/hooks/useServerPagination";
+import { DEFAULT_SORT_CONFIG, DEFAULT_PAGE_SIZE } from "@/constants";
 
 const ProductPage = () => {
   const productList = useSelector((state) => state.product.products);
@@ -53,9 +54,8 @@ const ProductPage = () => {
         setServerDownError(true);
       }
     },
-    defaultPageSize: 10,
-    defaultSortColumn: "uId",
-    defaultSortOrder: "desc",
+    defaultSort: DEFAULT_SORT_CONFIG,
+    initialPageSize: DEFAULT_PAGE_SIZE,
   });
 
   const redirectBack = () => {

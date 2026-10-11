@@ -4,6 +4,16 @@ import React from "react";
 import { Box, Skeleton, Stack } from "@mui/material";
 import { useTheme, alpha } from "@mui/material/styles";
 import { useThemeContext } from "@/context/ThemeContext";
+import {
+  SKELETON_DEFAULT_ROW_COUNT,
+  SKELETON_DEFAULT_COLUMN_COUNT,
+  SKELETON_ROW_HEIGHT,
+  SKELETON_CELL_HEIGHT,
+  SKELETON_ACTION_ICON_SIZE,
+  SKELETON_WIDTH_VARIATIONS,
+  TABLE_OVERLAY_MIN_HEIGHT,
+  TABLE_FALLBACK_THEME,
+} from "@/constants";
 
 export interface TableSkeletonOverlayProps {
   rowCount?: number;
@@ -18,26 +28,28 @@ export interface TableSkeletonOverlayProps {
 }
 
 export function TableSkeletonOverlay({
-  rowCount = 7,
-  columnCount = 6,
+  rowCount = SKELETON_DEFAULT_ROW_COUNT,
+  columnCount = SKELETON_DEFAULT_COLUMN_COUNT,
   columns,
 }: TableSkeletonOverlayProps) {
   const { currentTheme } = useThemeContext();
   const theme = useTheme();
 
   const primaryColor =
-    currentTheme?.primaryMain || theme.palette.primary?.main || "#6366f1";
-  const headerTint = currentTheme?.headerTint || alpha(primaryColor, 0.08);
+    currentTheme?.primaryMain ||
+    theme.palette.primary?.main ||
+    TABLE_FALLBACK_THEME.primaryMain;
+  const headerTint =
+    currentTheme?.headerTint || alpha(primaryColor, 0.08);
 
-  // Column width variations for realistic tabular skeleton layout
-  const defaultWidthPatterns = [65, 80, 50, 75, 45, 85, 60];
+  const widthPatterns = SKELETON_WIDTH_VARIATIONS;
 
   return (
     <Box
       sx={{
         width: "100%",
         height: "100%",
-        minHeight: 360,
+        minHeight: TABLE_OVERLAY_MIN_HEIGHT,
         bgcolor: "#ffffff",
         display: "flex",
         flexDirection: "column",
@@ -53,8 +65,8 @@ export function TableSkeletonOverlay({
               display: "flex",
               alignItems: "center",
               px: 2,
-              height: 52,
-              minHeight: 52,
+              height: SKELETON_ROW_HEIGHT,
+              minHeight: SKELETON_ROW_HEIGHT,
               borderBottom: `1px solid ${alpha(primaryColor, 0.07)}`,
               bgcolor: isOdd ? alpha(headerTint, 0.22) : "transparent",
               gap: 2,
@@ -64,8 +76,8 @@ export function TableSkeletonOverlay({
             {columns && columns.length > 0 ? (
               columns.map((col, colIndex) => {
                 const widthPercent =
-                  defaultWidthPatterns[
-                    (rowIndex + colIndex) % defaultWidthPatterns.length
+                  widthPatterns[
+                    (rowIndex + colIndex) % widthPatterns.length
                   ];
                 const isActionCol =
                   col.field === "actions" ||
@@ -90,15 +102,15 @@ export function TableSkeletonOverlay({
                         <Skeleton
                           variant="circular"
                           animation="wave"
-                          width={24}
-                          height={24}
+                          width={SKELETON_ACTION_ICON_SIZE}
+                          height={SKELETON_ACTION_ICON_SIZE}
                           sx={{ bgcolor: alpha(primaryColor, 0.1) }}
                         />
                         <Skeleton
                           variant="circular"
                           animation="wave"
-                          width={24}
-                          height={24}
+                          width={SKELETON_ACTION_ICON_SIZE}
+                          height={SKELETON_ACTION_ICON_SIZE}
                           sx={{ bgcolor: alpha(primaryColor, 0.1) }}
                         />
                       </Stack>
@@ -106,7 +118,7 @@ export function TableSkeletonOverlay({
                       <Skeleton
                         variant="rounded"
                         animation="wave"
-                        height={18}
+                        height={SKELETON_CELL_HEIGHT}
                         width={`${widthPercent}%`}
                         sx={{
                           bgcolor: alpha(primaryColor, 0.08),
@@ -120,8 +132,8 @@ export function TableSkeletonOverlay({
             ) : (
               [...Array(columnCount)].map((_, colIndex) => {
                 const widthPercent =
-                  defaultWidthPatterns[
-                    (rowIndex + colIndex) % defaultWidthPatterns.length
+                  widthPatterns[
+                    (rowIndex + colIndex) % widthPatterns.length
                   ];
                 return (
                   <Box
@@ -136,7 +148,7 @@ export function TableSkeletonOverlay({
                     <Skeleton
                       variant="rounded"
                       animation="wave"
-                      height={18}
+                      height={SKELETON_CELL_HEIGHT}
                       width={`${widthPercent}%`}
                       sx={{
                         bgcolor: alpha(primaryColor, 0.08),

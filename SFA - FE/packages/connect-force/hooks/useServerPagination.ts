@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import debounce from 'lodash/debounce';
+import {
+  DEFAULT_PAGE_INDEX,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORT_COLUMN,
+  DEFAULT_SORT_ORDER,
+  DEFAULT_SORT_CONFIG,
+  DEFAULT_SEARCH_DEBOUNCE_MS,
+} from '@/constants';
 
 export interface ServerPaginationParams {
   page: number; // 1-based index for Backend API
@@ -21,19 +29,19 @@ export interface UseServerPaginationOptions<T = any> {
 
 export function useServerPagination<T = any>({
   fetchData,
-  defaultPageSize = 10,
+  defaultPageSize = DEFAULT_PAGE_SIZE,
   initialPageSize,
-  defaultSortColumn = 'uId',
-  defaultSortOrder = 'desc',
-  defaultSort,
-  debounceMs = 450,
+  defaultSortColumn = DEFAULT_SORT_COLUMN,
+  defaultSortOrder = DEFAULT_SORT_ORDER,
+  defaultSort = DEFAULT_SORT_CONFIG,
+  debounceMs = DEFAULT_SEARCH_DEBOUNCE_MS,
 }: UseServerPaginationOptions<T>) {
   const initialPageSizeVal = initialPageSize ?? defaultPageSize;
   const initialSortCol = defaultSort?.field ?? defaultSortColumn;
   const initialSortOrd = defaultSort?.sort ?? defaultSortOrder;
 
   // MUI DataGrid uses 0-based page index
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(DEFAULT_PAGE_INDEX);
   const [pageSize, setPageSize] = useState<number>(initialPageSizeVal);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [sortColumn, setSortColumn] = useState<string>(initialSortCol);
