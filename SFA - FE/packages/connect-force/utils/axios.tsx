@@ -1,6 +1,11 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
 import { enqueueSnackbar } from "notistack";
+import { generateRequestSignature } from "./signature";
+
+const SIGNING_SECRET =
+  process.env.NEXT_PUBLIC_PAYLOAD_SIGNING_KEY ||
+  "79cdf21c41737e5e79e047d82e22fbab7e5b15606da15d4ed30139fc28367131";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -127,6 +132,36 @@ axiosInstance.interceptors.request.use(
     if (session) {
       request.headers.Authorization = `Bearer ${session.accessToken}`;
     }
+
+    // Cryptographic request signature for mutating requests (POST, PUT, PATCH, DELETE)
+    const method = (request.method || "").toUpperCase();
+    const isMutatingMethod = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+    const isFormData = typeof FormData !== "undefined" && request.data instanceof FormData;
+
+    if (isMutatingMethod && !isFormData) {
+      try {
+        const { headers, bodyString } = await generateRequestSignature(
+          method,
+          request.url || "",
+          request.data,
+          SIGNING_SECRET,
+          request.baseURL
+        );
+
+        request.headers["X-Signature"] = headers["X-Signature"];
+        request.headers["X-Timestamp"] = headers["X-Timestamp"];
+        request.headers["X-Nonce"] = headers["X-Nonce"];
+
+        // If data is an object, send the exact string that was hashed to avoid serialization discrepancy
+        if (request.data !== undefined && request.data !== null && typeof request.data !== "string") {
+          request.data = bodyString;
+          request.headers["Content-Type"] = "application/json";
+        }
+      } catch (signError) {
+        console.warn("Failed to generate request signature:", signError);
+      }
+    }
+
     return request;
   },
   (error) => {
