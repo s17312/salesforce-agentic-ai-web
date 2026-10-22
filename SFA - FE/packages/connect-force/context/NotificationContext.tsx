@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import * as signalR from "@microsoft/signalr";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { enqueueSnackbar } from "notistack";
 import {
   NotificationItem,
@@ -29,6 +29,7 @@ interface NotificationContextType {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
+  const { data: session, status } = useSession();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,6 +49,9 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   // Fetch notifications & unread badge count from REST API
   const loadData = useCallback(async () => {
+    if (status !== "authenticated") {
+      return;
+    }
     setIsLoading(true);
     try {
       const [list, count] = await Promise.all([
@@ -61,17 +65,18 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [status]);
 
-  // Initialize SignalR Hub Connection
+  // Initialize SignalR Hub Connection and load initial notifications
   useEffect(() => {
+    if (status !== "authenticated" || !session?.accessToken) {
+      return;
+    }
+
     let isMounted = true;
 
     const startSignalR = async () => {
       try {
-        const session = await getSession();
-        if (!session?.accessToken) return;
-
         const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5281/api/";
         const apiBase = rawApiUrl.replace(/\/api\/?$/, "");
         const hubUrl = `${apiBase}/hubs/notifications`;
@@ -80,7 +85,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
           .withUrl(hubUrl, {
             accessTokenFactory: async () => {
               const currentSession = await getSession();
-              return currentSession?.accessToken || "";
+              return currentSession?.accessToken || session?.accessToken || "";
             },
             transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
           })
@@ -139,11 +144,15 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
         connectionRef.current = connection;
 
         // Load initial data once connected
-        loadData();
+        if (isMounted) {
+          loadData();
+        }
       } catch (err) {
         console.warn("[NotificationContext] SignalR connection attempt failed (will retry or fallback to REST):", err);
         // Fallback to loading data via REST even if SignalR is down or initializing
-        loadData();
+        if (isMounted) {
+          loadData();
+        }
       }
     };
 
@@ -153,9 +162,10 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
       isMounted = false;
       if (connectionRef.current) {
         connectionRef.current.stop();
+        connectionRef.current = null;
       }
     };
-  }, [loadData, openNotificationDrawer]);
+  }, [status, session?.accessToken, loadData, openNotificationDrawer]);
 
   // Mark single notification or all notifications as read
   const handleMarkAsRead = async (notificationId?: number, markAll = false) => {
